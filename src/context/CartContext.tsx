@@ -27,7 +27,6 @@ interface CartContextType extends CartState {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
-  console.log('CartReducer: Action', action.type, action);
   switch (action.type) {
     case 'ADD_ITEM': {
       const existingItemIndex = state.items.findIndex(
@@ -45,13 +44,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         newItems = [...state.items, action.payload];
       }
 
-      const newState = {
+      return {
         items: newItems,
         total: newItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0),
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
       };
-      console.log('CartReducer: New state after ADD_ITEM', newState);
-      return newState;
     }
 
     case 'REMOVE_ITEM': {
@@ -105,10 +102,16 @@ const initialState: CartState = {
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Load cart from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isClient) {
       const savedCart = localStorage.getItem('king-covy-cart');
       if (savedCart) {
         try {
@@ -119,14 +122,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     }
-  }, []);
+  }, [isClient]);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isClient) {
       localStorage.setItem('king-covy-cart', JSON.stringify(state.items));
     }
-  }, [state.items]);
+  }, [state.items, isClient]);
 
   const addItem = (product: Product, quantity: number, customizations?: CartItem['customizations']) => {
     const cartItem: CartItem = {
@@ -135,7 +138,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       quantity,
       customizations,
     };
-    console.log('CartContext: Adding item', cartItem);
     dispatch({ type: 'ADD_ITEM', payload: cartItem });
   };
 
