@@ -1,0 +1,383 @@
+{
+  "products_table": {
+    "TableName": "king-covy-products",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "category",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "brand",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "featured",
+        "AttributeType": "BOOL"
+      },
+      {
+        "AttributeName": "createdAt",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "category-index",
+        "KeySchema": [
+          {
+            "AttributeName": "category",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "createdAt",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      },
+      {
+        "IndexName": "brand-index",
+        "KeySchema": [
+          {
+            "AttributeName": "brand",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "createdAt",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      },
+      {
+        "IndexName": "featured-index",
+        "KeySchema": [
+          {
+            "AttributeName": "featured",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "createdAt",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "SampleItem": {
+      "id": "prod_123",
+      "name": "Scotty Cameron Newport 2",
+      "description": "Classic blade putter with milled face for consistent roll",
+      "price": 399.99,
+      "originalPrice": 449.99,
+      "images": [
+        "https://your-cloudfront-domain.cloudfront.net/products/scotty-cameron-newport-2-1.jpg",
+        "https://your-cloudfront-domain.cloudfront.net/products/scotty-cameron-newport-2-2.jpg"
+      ],
+      "category": "putters",
+      "brand": "Scotty Cameron",
+      "condition": "excellent",
+      "specifications": {
+        "model": "Newport 2",
+        "year": 2023,
+        "weight": "350g",
+        "finish": "Stainless Steel",
+        "length": "34 inches",
+        "loft": "3°",
+        "lie": "70°",
+        "grip": "Scotty Cameron Matador",
+        "material": "Stainless Steel"
+      },
+      "isCustomizable": true,
+      "customizationOptions": {
+        "engraving": {
+          "available": true,
+          "maxLength": 20,
+          "locations": ["toe", "heel", "bumper"]
+        },
+        "grip": {
+          "available": true,
+          "options": [
+            {
+              "id": "standard",
+              "name": "Standard Matador",
+              "price": 0,
+              "colors": ["black", "red"]
+            },
+            {
+              "id": "premium",
+              "name": "Premium Leather",
+              "price": 25,
+              "colors": ["brown", "black"]
+            }
+          ]
+        },
+        "shaft": {
+          "available": false,
+          "options": []
+        }
+      },
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z",
+      "featured": true,
+      "tags": ["putter", "scotty-cameron", "blade", "milled"],
+      "seoTitle": "Scotty Cameron Newport 2 Putter - Premium Golf Equipment",
+      "seoDescription": "Classic blade putter with milled face. Premium Scotty Cameron craftsmanship.",
+      "sku": "SC-NP2-2023",
+      "weight": 1.2,
+      "dimensions": {
+        "length": 34,
+        "width": 4,
+        "height": 1.5
+      }
+    }
+  },
+  "inventory_table": {
+    "TableName": "king-covy-inventory",
+    "KeySchema": [
+      {
+        "AttributeName": "productId",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "productId",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "lastUpdated",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "last-updated-index",
+        "KeySchema": [
+          {
+            "AttributeName": "lastUpdated",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "SampleItem": {
+      "productId": "prod_123",
+      "stock": 3,
+      "reserved": 0,
+      "available": 3,
+      "lowStockThreshold": 5,
+      "lastUpdated": "2024-01-01T12:00:00Z",
+      "lastRestocked": "2024-01-01T10:00:00Z",
+      "restockNotes": "Received new shipment from manufacturer"
+    }
+  },
+  "orders_table": {
+    "TableName": "king-covy-orders",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "customerEmail",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "status",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "createdAt",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "customer-email-index",
+        "KeySchema": [
+          {
+            "AttributeName": "customerEmail",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "createdAt",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      },
+      {
+        "IndexName": "status-index",
+        "KeySchema": [
+          {
+            "AttributeName": "status",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "createdAt",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "SampleItem": {
+      "id": "order_456",
+      "customerEmail": "customer@example.com",
+      "customerName": "John Doe",
+      "items": [
+        {
+          "productId": "prod_123",
+          "quantity": 1,
+          "unitPrice": 399.99,
+          "customizations": {
+            "engraving": "JD 2024 (toe)",
+            "grip": "premium"
+          }
+        }
+      ],
+      "subtotal": 424.99,
+      "tax": 34.00,
+      "shipping": 0,
+      "total": 458.99,
+      "status": "pending",
+      "shippingAddress": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "company": "",
+        "address1": "123 Main St",
+        "address2": "Apt 4B",
+        "city": "Augusta",
+        "state": "GA",
+        "zipCode": "30901",
+        "country": "US",
+        "phone": "555-123-4567"
+      },
+      "billingAddress": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "company": "",
+        "address1": "123 Main St",
+        "address2": "Apt 4B",
+        "city": "Augusta",
+        "state": "GA",
+        "zipCode": "30901",
+        "country": "US",
+        "phone": "555-123-4567"
+      },
+      "paymentIntentId": "pi_1234567890",
+      "stripeSessionId": "cs_1234567890",
+      "shippingMethod": "standard",
+      "trackingNumber": "",
+      "notes": "",
+      "quickbooksInvoiceId": "",
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:00:00Z"
+    }
+  },
+  "customers_table": {
+    "TableName": "king-covy-customers",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ],
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "S"
+      },
+      {
+        "AttributeName": "email",
+        "AttributeType": "S"
+      }
+    ],
+    "GlobalSecondaryIndexes": [
+      {
+        "IndexName": "email-index",
+        "KeySchema": [
+          {
+            "AttributeName": "email",
+            "KeyType": "HASH"
+          }
+        ],
+        "Projection": {
+          "ProjectionType": "ALL"
+        },
+        "BillingMode": "PAY_PER_REQUEST"
+      }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "SampleItem": {
+      "id": "cust_789",
+      "email": "customer@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "phone": "555-123-4567",
+      "addresses": [
+        {
+          "type": "shipping",
+          "firstName": "John",
+          "lastName": "Doe",
+          "company": "",
+          "address1": "123 Main St",
+          "address2": "Apt 4B",
+          "city": "Augusta",
+          "state": "GA",
+          "zipCode": "30901",
+          "country": "US",
+          "phone": "555-123-4567",
+          "isDefault": true
+        }
+      ],
+      "preferences": {
+        "newsletter": true,
+        "smsUpdates": false,
+        "customizationEmails": true
+      },
+      "totalOrders": 3,
+      "totalSpent": 1299.97,
+      "createdAt": "2024-01-01T12:00:00Z",
+      "updatedAt": "2024-01-01T12:00:00Z"
+    }
+  }
+}
