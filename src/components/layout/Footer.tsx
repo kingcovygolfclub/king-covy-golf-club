@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import NoPrefetchLink from '@/components/ui/NoPrefetchLink';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer: React.FC = () => {
@@ -51,9 +52,9 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/custom" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
+                <NoPrefetchLink href="/custom" className="text-gray-300 hover:text-white transition-colors">
                   Custom Orders
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
                 <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
@@ -68,19 +69,19 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/shipping" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
+                <NoPrefetchLink href="/shipping" className="text-gray-300 hover:text-white transition-colors">
                   Shipping Info
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
-                <Link href="/returns" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
+                <NoPrefetchLink href="/returns" className="text-gray-300 hover:text-white transition-colors">
                   Returns & Exchanges
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
-                <Link href="/warranty" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
+                <NoPrefetchLink href="/warranty" className="text-gray-300 hover:text-white transition-colors">
                   Warranty
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
                 <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
@@ -119,15 +120,15 @@ const Footer: React.FC = () => {
               © {currentYear} King Covy Golf Club. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
+              <NoPrefetchLink href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
+              </NoPrefetchLink>
+              <NoPrefetchLink href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Terms of Service
-              </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
+              </NoPrefetchLink>
+              <NoPrefetchLink href="/cookies" className="text-gray-400 hover:text-white text-sm transition-colors">
                 Cookie Policy
-              </Link>
+              </NoPrefetchLink>
             </div>
           </div>
         </div>
