@@ -1,5 +1,8 @@
-const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+
+const client = new DynamoDBClient({});
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 const PRODUCTS_TABLE = process.env.PRODUCTS_TABLE || 'king-covy-products';
 
@@ -22,8 +25,7 @@ exports.handler = async (event) => {
 
     let params = {
       TableName: PRODUCTS_TABLE,
-      Limit: parseInt(limit),
-      ExclusiveStartKey: null
+      Limit: parseInt(limit)
     };
 
     // Handle pagination
@@ -79,7 +81,11 @@ exports.handler = async (event) => {
     // Add filter expression to params if any filters exist
     if (filterExpressions.length > 0) {
       params.FilterExpression = filterExpressions.join(' AND ');
-      params.ExpressionAttributeValues = expressionAttributeValues;
+      
+      // Only add ExpressionAttributeValues if it has content
+      if (Object.keys(expressionAttributeValues).length > 0) {
+        params.ExpressionAttributeValues = expressionAttributeValues;
+      }
       
       if (Object.keys(expressionAttributeNames).length > 0) {
         params.ExpressionAttributeNames = expressionAttributeNames;
@@ -87,44 +93,31 @@ exports.handler = async (event) => {
     }
 
     // Handle sorting
-    if (sortBy === 'featured' && !category && !brand) {
-      // Use GSI for featured items
-      params = {
-        ...params,
-        IndexName: 'featured-index',
-        KeyConditionExpression: 'featured = :featured',
-        ExpressionAttributeValues: {
-          ...params.ExpressionAttributeValues,
-          ':featured': true
-        }
-      };
-    } else if (category && sortBy !== 'featured') {
+    if (category && sortBy !== 'featured') {
       // Use category GSI
-      params = {
-        ...params,
-        IndexName: 'category-index',
-        KeyConditionExpression: 'category = :category',
-        ExpressionAttributeValues: {
-          ...params.ExpressionAttributeValues,
-          ':category': category
-        }
-      };
+      params.IndexName = 'category-index';
+      params.KeyConditionExpression = 'category = :category';
+      
+      // Merge expression attribute values
+      if (!params.ExpressionAttributeValues) {
+        params.ExpressionAttributeValues = {};
+      }
+      params.ExpressionAttributeValues[':category'] = category;
     } else if (brand && sortBy !== 'featured') {
       // Use brand GSI
-      params = {
-        ...params,
-        IndexName: 'brand-index',
-        KeyConditionExpression: 'brand = :brand',
-        ExpressionAttributeValues: {
-          ...params.ExpressionAttributeValues,
-          ':brand': brand
-        }
-      };
+      params.IndexName = 'brand-index';
+      params.KeyConditionExpression = 'brand = :brand';
+      
+      // Merge expression attribute values
+      if (!params.ExpressionAttributeValues) {
+        params.ExpressionAttributeValues = {};
+      }
+      params.ExpressionAttributeValues[':brand'] = brand;
     }
 
     console.log('DynamoDB params:', JSON.stringify(params, null, 2));
 
-    const result = await dynamodb.scan(params).promise();
+    const result = await dynamodb.send(new ScanCommand(params));
 
     // Apply client-side sorting if needed
     let products = result.Items || [];

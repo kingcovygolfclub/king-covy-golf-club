@@ -1,5 +1,8 @@
-const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, GetCommand } = require('@aws-sdk/lib-dynamodb');
+
+const client = new DynamoDBClient({});
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 const PRODUCTS_TABLE = process.env.PRODUCTS_TABLE || 'king-covy-products';
 
@@ -34,7 +37,7 @@ exports.handler = async (event) => {
 
     console.log('DynamoDB params:', JSON.stringify(params, null, 2));
 
-    const result = await dynamodb.get(params).promise();
+    const result = await dynamodb.send(new GetCommand(params));
 
     if (!result.Item) {
       return {

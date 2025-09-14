@@ -1,0 +1,7 @@
+{
+  "Variables": {
+    "PRODUCTS_TABLE": "king-covy-products",
+    "ORDERS_TABLE": "king-covy-orders",
+    "CUSTOMERS_TABLE": "king-covy-customers"
+  }
+}

@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Star, ShoppingCart, Truck, Shield, RotateCcw } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { apiService } from '@/services/api';
+import { Product } from '@/types';
 
 // Mock product data
 const mockProduct = {
@@ -59,14 +61,42 @@ const mockProduct = {
   tags: ['putter', 'scotty-cameron', 'blade', 'milled', 'premium']
 };
 
-export default function ProductDetailPage() {
-  const [product] = useState(mockProduct);
+export default function ProductDetailPage({ params }: { params: { id: string } }) {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedGrip, setSelectedGrip] = useState('standard');
   const [engravingText, setEngravingText] = useState('');
   const [engravingLocation, setEngravingLocation] = useState('');
   const { addItem } = useCart();
+
+  // Load product from API
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await apiService.getProduct(params.id);
+        
+        if (response.success && response.data) {
+          setProduct(response.data);
+        } else {
+          console.warn('API failed, using mock data:', response.error);
+          setProduct(mockProduct as Product);
+        }
+      } catch (err) {
+        console.error('Failed to load product:', err);
+        setError('Failed to load product');
+        setProduct(mockProduct as Product);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [params.id]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -76,10 +106,12 @@ export default function ProductDetailPage() {
   };
 
   const calculateTotalPrice = () => {
+    if (!product) return 0;
+    
     let basePrice = product.price;
     let customizationPrice = 0;
 
-    if (selectedGrip !== 'standard') {
+    if (selectedGrip !== 'standard' && product.customizationOptions?.grip?.options) {
       const gripOption = product.customizationOptions.grip.options.find(
         option => option.id === selectedGrip
       );
@@ -92,6 +124,8 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToCart = () => {
+    if (!product) return;
+    
     const customizations = {
       grip: selectedGrip,
       engraving: engravingText ? `${engravingText} (${engravingLocation})` : undefined
@@ -102,6 +136,50 @@ export default function ProductDetailPage() {
     // Show success message (you could use a toast library here)
     alert(`${product.name} added to cart!`);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && !product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-50 border border-red-200 rounded-md p-6 max-w-md">
+            <h3 className="text-lg font-medium text-red-800 mb-2">Error loading product</h3>
+            <p className="text-red-700">{error}</p>
+            <Link href="/shop" className="mt-4 inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700" prefetch={false}>
+              Back to Shop
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Product not found
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Product not found</h3>
+          <p className="text-gray-600 mb-4">The product you're looking for doesn't exist.</p>
+          <Link href="/shop" className="inline-block bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700" prefetch={false}>
+            Back to Shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
