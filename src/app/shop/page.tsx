@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Star, ShoppingCart, Filter, Grid, List } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { Product } from '@/types';
 
 // Mock products data
 const mockProducts = [
@@ -92,8 +93,8 @@ const mockProducts = [
       shaft: {
         available: true,
         options: [
-          { id: 'standard', name: 'HZRDUS Smoke', price: 0, flex: ['stiff', 'regular'] },
-          { id: 'premium', name: 'Aldila Rogue', price: 100, flex: ['stiff', 'x-stiff'] }
+          { id: 'standard', name: 'HZRDUS Smoke', price: 0, flex: 'stiff', weight: '60g' },
+          { id: 'premium', name: 'Aldila Rogue', price: 100, flex: 'x-stiff', weight: '65g' }
         ]
       }
     },
@@ -140,8 +141,8 @@ const mockProducts = [
       shaft: {
         available: true,
         options: [
-          { id: 'standard', name: 'KBS Tour', price: 0, flex: ['stiff', 'regular'] },
-          { id: 'premium', name: 'True Temper Dynamic Gold', price: 80, flex: ['stiff', 'x-stiff'] }
+          { id: 'standard', name: 'KBS Tour', price: 0, flex: 'stiff', weight: '120g' },
+          { id: 'premium', name: 'True Temper Dynamic Gold', price: 80, flex: 'x-stiff', weight: '130g' }
         ]
       }
     },
@@ -153,7 +154,7 @@ const mockProducts = [
 ];
 
 export default function ShopPage() {
-  const [products] = useState(mockProducts);
+  const [products] = useState<Product[]>(mockProducts);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { addItem } = useCart();
 
@@ -164,7 +165,7 @@ export default function ShopPage() {
     }).format(price);
   };
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     console.log('Adding to cart:', product);
     console.log('Cart context:', { addItem });
     try {
@@ -177,7 +178,7 @@ export default function ShopPage() {
     }
   };
 
-  const ProductCard: React.FC<{ product: any }> = ({ product }) => (
+  const ProductCard: React.FC<{ product: Product }> = ({ product }) => (
     <div className="card group">
       <div className="relative aspect-square overflow-hidden">
         <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
