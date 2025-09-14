@@ -4,9 +4,9 @@ const nextConfig = {
     domains: ['localhost', 'your-s3-bucket.s3.amazonaws.com', 'your-cloudfront-domain.cloudfront.net'],
   },
   trailingSlash: false,
-  // Add cache busting to force new builds
+  // Add aggressive cache busting with version identifier
   generateBuildId: async () => {
-    return `build-${Date.now()}`
+    return `v2-no-prefetch-${Date.now()}`
   },
   async redirects() {
     return []
