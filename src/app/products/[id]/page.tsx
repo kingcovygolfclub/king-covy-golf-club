@@ -96,6 +96,7 @@ export default function ProductDetailPage() {
       }
     };
     
+    console.log('Adding to cart:', { product, quantity, customizations });
     addItem(product, quantity, customizations);
     
     // Show success message (you could use a toast library here)

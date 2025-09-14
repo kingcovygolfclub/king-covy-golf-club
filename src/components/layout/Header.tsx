@@ -10,6 +10,8 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCart();
+  
+  console.log('Header: Cart item count', itemCount);
 
   const navigation = [
     { name: 'Home', href: '/' },
