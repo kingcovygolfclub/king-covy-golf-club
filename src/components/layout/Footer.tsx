@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/custom" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/custom" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
                   Custom Orders
                 </Link>
               </li>
@@ -68,17 +68,17 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/shipping" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/shipping" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/returns" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
                   Returns & Exchanges
                 </Link>
               </li>
               <li>
-                <Link href="/warranty" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/warranty" className="text-gray-300 hover:text-white transition-colors" prefetch={false}>
                   Warranty
                 </Link>
               </li>
