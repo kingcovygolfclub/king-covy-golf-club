@@ -165,9 +165,16 @@ export default function ShopPage() {
   };
 
   const handleAddToCart = (product: any) => {
-    addItem(product, 1);
-    // Show success message
-    alert(`${product.name} added to cart!`);
+    console.log('Adding to cart:', product);
+    console.log('Cart context:', { addItem });
+    try {
+      addItem(product, 1);
+      // Show success message
+      alert(`${product.name} added to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Error adding to cart. Please try again.');
+    }
   };
 
   const ProductCard: React.FC<{ product: any }> = ({ product }) => (
@@ -230,7 +237,11 @@ export default function ShopPage() {
             View Details
           </Link>
           <button 
-            onClick={() => handleAddToCart(product)}
+            onClick={(e) => {
+              e.preventDefault();
+              console.log('Button clicked for product:', product.name);
+              handleAddToCart(product);
+            }}
             disabled={product.stock === 0}
             className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center justify-center"
           >
