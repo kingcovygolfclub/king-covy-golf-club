@@ -104,6 +104,34 @@ class ApiService {
     });
   }
 
+  // Admin endpoints
+  async createProduct(productData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/products', {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+  }
+
+  async updateProduct(productId: string, productData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>(`/admin/products/${productId}`, {
+      method: 'PUT',
+      body: JSON.stringify(productData)
+    });
+  }
+
+  async deleteProduct(productId: string): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>(`/admin/products/${productId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async manageInventory(inventoryData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/inventory', {
+      method: 'POST',
+      body: JSON.stringify(inventoryData)
+    });
+  }
+
   // Mock data fallback for development
   getMockProducts() {
     return [

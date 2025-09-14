@@ -1,0 +1,11 @@
+{
+  "name": "king-covy-admin-create-product",
+  "version": "1.0.0",
+  "description": "Admin Lambda function to create products",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.x",
+    "@aws-sdk/lib-dynamodb": "^3.x",
+    "uuid": "^9.x"
+  }
+}

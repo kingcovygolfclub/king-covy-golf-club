@@ -16,6 +16,7 @@ export interface Product {
   updatedAt: string;
   featured: boolean;
   tags: string[];
+  status?: 'active' | 'inactive' | 'deleted';
 }
 
 export interface ProductSpecifications {
