@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, ShoppingCart, Filter, Grid, List } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 // Mock products data
 const mockProducts = [
@@ -14,11 +15,44 @@ const mockProducts = [
     price: 399.99,
     originalPrice: 449.99,
     images: ['/placeholder-golf-club.jpg'],
-    category: 'putters',
+    category: 'putters' as const,
     brand: 'Scotty Cameron',
-    condition: 'excellent',
+    condition: 'excellent' as const,
     stock: 3,
     isCustomizable: true,
+    specifications: {
+      model: 'Newport 2',
+      year: 2023,
+      weight: '350g',
+      finish: 'Stainless Steel',
+      length: '34 inches',
+      loft: 3,
+      lie: 70,
+      grip: 'Scotty Cameron Matador',
+      material: 'Stainless Steel'
+    },
+    customizationOptions: {
+      engraving: {
+        available: true,
+        maxLength: 20,
+        locations: ['toe', 'heel', 'bumper']
+      },
+      grip: {
+        available: true,
+        options: [
+          { id: 'standard', name: 'Standard Matador', price: 0, colors: ['black', 'red'] },
+          { id: 'premium', name: 'Premium Leather', price: 25, colors: ['brown', 'black'] }
+        ]
+      },
+      shaft: {
+        available: false,
+        options: []
+      }
+    },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    featured: true,
+    tags: ['putter', 'scotty-cameron', 'blade', 'milled', 'premium']
   },
   {
     id: '2',
@@ -26,11 +60,47 @@ const mockProducts = [
     description: 'Advanced driver with adjustable CG for maximum distance',
     price: 599.99,
     images: ['/placeholder-golf-club.jpg'],
-    category: 'drivers',
+    category: 'drivers' as const,
     brand: 'Titleist',
-    condition: 'new',
+    condition: 'new' as const,
     stock: 5,
     isCustomizable: true,
+    specifications: {
+      model: 'TSR3',
+      year: 2023,
+      weight: '308g',
+      finish: 'Pearl',
+      length: '45.5 inches',
+      loft: 9.5,
+      lie: 58,
+      grip: 'Golf Pride Tour Velvet',
+      material: 'Titanium'
+    },
+    customizationOptions: {
+      engraving: {
+        available: true,
+        maxLength: 15,
+        locations: ['crown', 'sole']
+      },
+      grip: {
+        available: true,
+        options: [
+          { id: 'standard', name: 'Tour Velvet', price: 0, colors: ['black', 'blue'] },
+          { id: 'premium', name: 'Winn Dri-Tac', price: 20, colors: ['white', 'gray'] }
+        ]
+      },
+      shaft: {
+        available: true,
+        options: [
+          { id: 'standard', name: 'HZRDUS Smoke', price: 0, flex: ['stiff', 'regular'] },
+          { id: 'premium', name: 'Aldila Rogue', price: 100, flex: ['stiff', 'x-stiff'] }
+        ]
+      }
+    },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    featured: true,
+    tags: ['driver', 'titleist', 'tsr3', 'adjustable', 'distance']
   },
   {
     id: '3',
@@ -38,23 +108,66 @@ const mockProducts = [
     description: 'Forged muscle back irons for skilled players',
     price: 1299.99,
     images: ['/placeholder-golf-club.jpg'],
-    category: 'irons',
+    category: 'irons' as const,
     brand: 'Mizuno',
-    condition: 'like-new',
+    condition: 'like-new' as const,
     stock: 2,
     isCustomizable: true,
+    specifications: {
+      model: 'MP-20',
+      year: 2020,
+      weight: '425g (6-iron)',
+      finish: 'Chrome',
+      length: '37.5 inches (6-iron)',
+      loft: 30,
+      lie: 62,
+      grip: 'Golf Pride Tour Velvet',
+      material: 'Forged Carbon Steel'
+    },
+    customizationOptions: {
+      engraving: {
+        available: true,
+        maxLength: 10,
+        locations: ['hosel', 'back']
+      },
+      grip: {
+        available: true,
+        options: [
+          { id: 'standard', name: 'Tour Velvet', price: 0, colors: ['black', 'white'] },
+          { id: 'premium', name: 'Golf Pride MCC', price: 15, colors: ['black', 'gray'] }
+        ]
+      },
+      shaft: {
+        available: true,
+        options: [
+          { id: 'standard', name: 'KBS Tour', price: 0, flex: ['stiff', 'regular'] },
+          { id: 'premium', name: 'True Temper Dynamic Gold', price: 80, flex: ['stiff', 'x-stiff'] }
+        ]
+      }
+    },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    featured: true,
+    tags: ['irons', 'mizuno', 'mp-20', 'forged', 'muscle-back']
   }
 ];
 
 export default function ShopPage() {
   const [products] = useState(mockProducts);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { addItem } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(price);
+  };
+
+  const handleAddToCart = (product: any) => {
+    addItem(product, 1);
+    // Show success message
+    alert(`${product.name} added to cart!`);
   };
 
   const ProductCard: React.FC<{ product: any }> = ({ product }) => (
@@ -116,7 +229,11 @@ export default function ShopPage() {
           >
             View Details
           </Link>
-          <button className="flex-1 btn-primary text-sm flex items-center justify-center">
+          <button 
+            onClick={() => handleAddToCart(product)}
+            disabled={product.stock === 0}
+            className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center justify-center"
+          >
             <ShoppingCart className="h-4 w-4 mr-1" />
             Add
           </button>
