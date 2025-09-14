@@ -3,29 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { Minus, Plus, X, ShoppingBag, ArrowLeft } from 'lucide-react';
-
-// Mock cart data
-const mockCartItems = [
-  {
-    productId: '1',
-    product: {
-      id: '1',
-      name: 'Scotty Cameron Newport 2',
-      price: 399.99,
-      images: ['/placeholder-golf-club.jpg'],
-      brand: 'Scotty Cameron',
-      condition: 'excellent'
-    },
-    quantity: 1,
-    customizations: {
-      engraving: 'JD 2024 (toe)',
-      grip: 'premium'
-    }
-  }
-];
+import { useCart } from '@/context/CartContext';
 
 export default function CartPage() {
-  const items = mockCartItems;
+  const { items, updateQuantity, removeItem, clearCart } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -91,7 +72,10 @@ export default function CartPage() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">Cart Items</h2>
-                  <button className="text-sm text-red-600 hover:text-red-700">
+                  <button 
+                    onClick={clearCart}
+                    className="text-sm text-red-600 hover:text-red-700"
+                  >
                     Clear Cart
                   </button>
                 </div>
@@ -137,13 +121,19 @@ export default function CartPage() {
                       <div className="flex items-center space-x-4">
                         {/* Quantity Controls */}
                         <div className="flex items-center border border-gray-300 rounded-lg">
-                          <button className="p-2 text-gray-600 hover:text-gray-900">
+                          <button 
+                            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                            className="p-2 text-gray-600 hover:text-gray-900"
+                          >
                             <Minus className="h-4 w-4" />
                           </button>
                           <span className="px-3 py-2 border-x border-gray-300">
                             {item.quantity}
                           </span>
-                          <button className="p-2 text-gray-600 hover:text-gray-900">
+                          <button 
+                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            className="p-2 text-gray-600 hover:text-gray-900"
+                          >
                             <Plus className="h-4 w-4" />
                           </button>
                         </div>
@@ -159,7 +149,10 @@ export default function CartPage() {
                         </div>
 
                         {/* Remove Button */}
-                        <button className="p-2 text-gray-400 hover:text-red-600">
+                        <button 
+                          onClick={() => removeItem(item.productId)}
+                          className="p-2 text-gray-400 hover:text-red-600"
+                        >
                           <X className="h-5 w-5" />
                         </button>
                       </div>

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Star, ShoppingCart, Truck, Shield, RotateCcw } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 // Mock product data
 const mockProduct = {
@@ -61,6 +62,7 @@ export default function ProductDetailPage() {
   const [selectedGrip, setSelectedGrip] = useState('standard');
   const [engravingText, setEngravingText] = useState('');
   const [engravingLocation, setEngravingLocation] = useState('');
+  const { addItem } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -83,6 +85,21 @@ export default function ProductDetailPage() {
     }
 
     return (basePrice + customizationPrice) * quantity;
+  };
+
+  const handleAddToCart = () => {
+    const customizations = {
+      grip: selectedGrip,
+      engraving: {
+        text: engravingText,
+        location: engravingLocation
+      }
+    };
+    
+    addItem(product, quantity, customizations);
+    
+    // Show success message (you could use a toast library here)
+    alert(`${product.name} added to cart!`);
   };
 
   return (
@@ -294,7 +311,10 @@ export default function ProductDetailPage() {
                 </div>
                 
                 <div className="flex space-x-4">
-                  <button className="flex-1 btn-primary flex items-center justify-center">
+                  <button 
+                    onClick={handleAddToCart}
+                    className="flex-1 btn-primary flex items-center justify-center"
+                  >
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
                   </button>
