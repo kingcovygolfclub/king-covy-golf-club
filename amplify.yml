@@ -24,3 +24,15 @@ frontend:
     - source: '/<*>'
       target: '/index.html'
       status: 200
+    - source: '/shipping'
+      target: '/shipping/'
+      status: 301
+    - source: '/returns'
+      target: '/returns/'
+      status: 301
+    - source: '/warranty'
+      target: '/warranty/'
+      status: 301
+    - source: '/custom'
+      target: '/custom/'
+      status: 301

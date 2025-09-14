@@ -18,17 +18,17 @@ const mockProduct = {
     '/placeholder-golf-club.jpg',
     '/placeholder-golf-club.jpg'
   ],
-  category: 'putters',
+  category: 'putters' as const,
   brand: 'Scotty Cameron',
-  condition: 'excellent',
+  condition: 'excellent' as const,
   specifications: {
     model: 'Newport 2',
     year: 2023,
     weight: '350g',
     finish: 'Stainless Steel',
     length: '34 inches',
-    loft: '3°',
-    lie: '70°',
+    loft: 3,
+    lie: 70,
     grip: 'Scotty Cameron Matador',
     material: 'Stainless Steel'
   },
@@ -47,6 +47,10 @@ const mockProduct = {
         { id: 'premium', name: 'Premium Leather', price: 25, colors: ['brown', 'black'] },
         { id: 'cord', name: 'Cord Grip', price: 15, colors: ['black', 'white'] }
       ]
+    },
+    shaft: {
+      available: false,
+      options: []
     }
   },
   createdAt: '2024-01-01T00:00:00Z',
@@ -90,10 +94,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     const customizations = {
       grip: selectedGrip,
-      engraving: {
-        text: engravingText,
-        location: engravingLocation
-      }
+      engraving: engravingText ? `${engravingText} (${engravingLocation})` : undefined
     };
     
     addItem(product, quantity, customizations);
