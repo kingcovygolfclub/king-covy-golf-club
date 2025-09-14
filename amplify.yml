@@ -15,3 +15,12 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: Cache-Control
+          value: public,max-age=0,must-revalidate
+  redirects:
+    - source: '/<*>'
+      target: '/index.html'
+      status: 200
