@@ -4,9 +4,6 @@ const nextConfig = {
     domains: ['localhost', 'your-s3-bucket.s3.amazonaws.com', 'your-cloudfront-domain.cloudfront.net'],
   },
   trailingSlash: false,
-  experimental: {
-    appDir: true,
-  },
   async redirects() {
     return []
   },

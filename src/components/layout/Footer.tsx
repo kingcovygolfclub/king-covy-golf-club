@@ -119,13 +119,13 @@ const Footer: React.FC = () => {
               © {currentYear} King Covy Golf Club. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/terms" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
                 Terms of Service
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white text-sm transition-colors">
+              <Link href="/cookies" className="text-gray-400 hover:text-white text-sm transition-colors" prefetch={false}>
                 Cookie Policy
               </Link>
             </div>
