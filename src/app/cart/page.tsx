@@ -41,7 +41,7 @@ export default function CartPage() {
             <p className="text-lg text-gray-600 mb-8">
               Looks like you haven't added any items to your cart yet.
             </p>
-            <Link href="/shop" className="btn-primary">
+            <Link href="/shop" className="btn-primary" prefetch={false}>
               Continue Shopping
             </Link>
           </div>
@@ -55,7 +55,7 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/shop" className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-4">
+          <Link href="/shop" className="inline-flex items-center text-primary-600 hover:text-primary-700 mb-4" prefetch={false}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Continue Shopping
           </Link>

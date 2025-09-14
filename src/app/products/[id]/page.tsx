@@ -108,11 +108,11 @@ export default function ProductDetailPage() {
         {/* Breadcrumb */}
         <nav className="mb-8">
           <ol className="flex items-center space-x-2 text-sm text-gray-500">
-            <li><Link href="/" className="hover:text-primary-600">Home</Link></li>
+            <li><Link href="/" className="hover:text-primary-600" prefetch={false}>Home</Link></li>
             <li>/</li>
-            <li><Link href="/shop" className="hover:text-primary-600">Shop</Link></li>
+            <li><Link href="/shop" className="hover:text-primary-600" prefetch={false}>Shop</Link></li>
             <li>/</li>
-            <li><Link href={`/shop?category=${product.category}`} className="hover:text-primary-600 capitalize">
+            <li><Link href={`/shop?category=${product.category}`} className="hover:text-primary-600 capitalize" prefetch={false}>
               {product.category.replace('-', ' ')}
             </Link></li>
             <li>/</li>

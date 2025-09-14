@@ -42,14 +42,14 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/shop" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/shop" className="text-gray-300 hover:text-white transition-colors">
                   Shop All Products
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
-                <Link href="/categories" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/categories" className="text-gray-300 hover:text-white transition-colors">
                   Categories
-                </Link>
+                </NoPrefetchLink>
               </li>
               <li>
                 <NoPrefetchLink href="/custom" className="text-gray-300 hover:text-white transition-colors">
@@ -57,9 +57,9 @@ const Footer: React.FC = () => {
                 </NoPrefetchLink>
               </li>
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/about" className="text-gray-300 hover:text-white transition-colors">
                   About Us
-                </Link>
+                </NoPrefetchLink>
               </li>
             </ul>
           </div>
@@ -84,9 +84,9 @@ const Footer: React.FC = () => {
                 </NoPrefetchLink>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/contact" className="text-gray-300 hover:text-white transition-colors">
                   Contact Us
-                </Link>
+                </NoPrefetchLink>
               </li>
             </ul>
           </div>
