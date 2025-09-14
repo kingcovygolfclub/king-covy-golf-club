@@ -76,6 +76,34 @@ class ApiService {
     return this.makeRequest<any>(`/products/${id}`);
   }
 
+  // Order management endpoints
+  async createOrder(orderData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/orders', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+  }
+
+  async getOrder(orderId: string, customerEmail?: string): Promise<ApiResponse<any>> {
+    const queryParams = customerEmail ? `?email=${encodeURIComponent(customerEmail)}` : '';
+    return this.makeRequest<any>(`/orders/${orderId}${queryParams}`);
+  }
+
+  async getCustomerOrders(customerEmail: string, limit?: number): Promise<ApiResponse<any>> {
+    const queryParams = new URLSearchParams({
+      email: customerEmail,
+      ...(limit && { limit: limit.toString() })
+    });
+    return this.makeRequest<any>(`/orders/customer?${queryParams.toString()}`);
+  }
+
+  async updateOrderStatus(orderId: string, statusData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>(`/orders/${orderId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify(statusData)
+    });
+  }
+
   // Mock data fallback for development
   getMockProducts() {
     return [

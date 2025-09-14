@@ -6,10 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Lock, Shield, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { loadStripe } from '@stripe/stripe-js';
+import { apiService } from '@/services/api';
 import { Address } from '@/types';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -77,44 +75,66 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Create payment intent on server
-      const response = await fetch('/api/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Create order using our order management system
+      const orderData = {
+        customerInfo: {
+          email: email,
+          firstName: shippingAddress.firstName,
+          lastName: shippingAddress.lastName,
+          phone: shippingAddress.phone
         },
-        body: JSON.stringify({
-          items: items.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            customizations: item.customizations,
-          })),
-          shippingAddress: useSameAddress ? shippingAddress : billingAddress,
-          billingAddress,
-          email,
-          total: calculateTotal(),
-        }),
-      });
+        items: items.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          customizations: item.customizations,
+        })),
+        shippingAddress: {
+          firstName: shippingAddress.firstName,
+          lastName: shippingAddress.lastName,
+          address: shippingAddress.address1,
+          address2: shippingAddress.address2,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          zipCode: shippingAddress.zipCode,
+          country: shippingAddress.country,
+          phone: shippingAddress.phone
+        },
+        billingAddress: useSameAddress ? {
+          firstName: shippingAddress.firstName,
+          lastName: shippingAddress.lastName,
+          address: shippingAddress.address1,
+          address2: shippingAddress.address2,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          zipCode: shippingAddress.zipCode,
+          country: shippingAddress.country,
+          phone: shippingAddress.phone
+        } : {
+          firstName: billingAddress.firstName,
+          lastName: billingAddress.lastName,
+          address: billingAddress.address1,
+          address2: billingAddress.address2,
+          city: billingAddress.city,
+          state: billingAddress.state,
+          zipCode: billingAddress.zipCode,
+          country: billingAddress.country,
+          phone: billingAddress.phone
+        },
+        notes: 'Order placed through website checkout'
+      };
 
-      const { clientSecret } = await response.json();
+      const response = await apiService.createOrder(orderData);
 
-      if (!clientSecret) {
-        throw new Error('Failed to create payment intent');
-      }
-
-      // Redirect to Stripe Checkout
-      const stripe = await stripePromise;
-      const { error } = await stripe!.redirectToCheckout({
-        sessionId: clientSecret, // In a real implementation, this would be a session ID
-      });
-
-      if (error) {
-        console.error('Stripe error:', error);
-        alert('Payment failed. Please try again.');
+      if (response.success && response.data) {
+        // Clear cart and redirect to confirmation
+        clearCart();
+        router.push(`/order-confirmation?orderId=${response.data.orderId}`);
+      } else {
+        throw new Error(response.error || 'Failed to create order');
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Checkout failed. Please try again.');
+      alert(`Checkout failed: ${error instanceof Error ? error.message : 'Please try again.'}`);
     } finally {
       setLoading(false);
     }
@@ -364,22 +384,18 @@ export default function CheckoutPage() {
 
             {/* Payment Method */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Payment Method</h2>
-              <div className="space-y-4">
-                <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    name="payment"
-                    value="card"
-                    checked={paymentMethod === 'card'}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="text-primary-600 focus:ring-primary-500"
-                  />
-                  <div className="ml-3">
-                    <div className="font-medium text-gray-900">Credit or Debit Card</div>
-                    <div className="text-sm text-gray-500">Visa, Mastercard, American Express</div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Payment Information</h2>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <Lock className="h-5 w-5 text-blue-400 mt-0.5 mr-3" />
+                  <div>
+                    <h3 className="text-sm font-medium text-blue-800">Payment Integration Coming Soon</h3>
+                    <p className="text-sm text-blue-700 mt-1">
+                      For now, you can place your order and we'll contact you to complete payment. 
+                      Secure payment processing will be available soon.
+                    </p>
                   </div>
-                </label>
+                </div>
               </div>
             </div>
           </div>

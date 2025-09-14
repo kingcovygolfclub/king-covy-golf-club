@@ -156,6 +156,10 @@ deploy_function() {
 # Deploy functions
 deploy_function "king-covy-get-products" "backend/lambda/get-products" "index.handler"
 deploy_function "king-covy-get-product" "backend/lambda/get-product" "index.handler"
+deploy_function "king-covy-create-order" "backend/lambda/create-order" "index.handler"
+deploy_function "king-covy-get-order" "backend/lambda/get-order" "index.handler"
+deploy_function "king-covy-get-customer-orders" "backend/lambda/get-customer-orders" "index.handler"
+deploy_function "king-covy-update-order-status" "backend/lambda/update-order-status" "index.handler"
 
 print_status "All Lambda functions deployed successfully!"
 
@@ -164,6 +168,10 @@ echo ""
 echo "📋 Deployed Functions:"
 echo "  • king-covy-get-products"
 echo "  • king-covy-get-product"
+echo "  • king-covy-create-order"
+echo "  • king-covy-get-order"
+echo "  • king-covy-get-customer-orders"
+echo "  • king-covy-update-order-status"
 echo ""
 echo "🔗 Next steps:"
 echo "  1. Set up API Gateway to expose these functions"
