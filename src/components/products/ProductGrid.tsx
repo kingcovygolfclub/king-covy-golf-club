@@ -15,8 +15,7 @@ interface ProductGridProps {
 const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   const { addItem } = useCart();
   
-  console.log('ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
-  console.log('First product images:', products[0]?.images);
+  // console.log('ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -38,10 +37,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       <div 
         className="relative w-full h-64 overflow-hidden bg-cover bg-center bg-no-repeat group-hover:scale-105 transition-transform duration-300"
         style={{
-          backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'})`,
-          border: '3px solid red'
+          backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}?v=${Date.now()})`
         }}
-        onLoad={() => console.log('Background image loaded:', product.images[0])}
       >
         {product.originalPrice && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
@@ -115,7 +112,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
         <div 
           className="relative w-24 h-24 flex-shrink-0 bg-cover bg-center bg-no-repeat rounded-md"
           style={{
-            backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'})`
+            backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}?v=${Date.now()})`
           }}
         >
           {product.originalPrice && (
