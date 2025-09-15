@@ -31,7 +31,7 @@ deploy_function() {
             --role arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/lambda-execution-role \
             --handler "$handler" \
             --zip-file fileb://function.zip \
-            --environment Variables="$(cat ../../../env-vars.json)"
+            --environment Variables='{PRODUCTS_TABLE=king-covy-products,ORDERS_TABLE=king-covy-orders,CUSTOMERS_TABLE=king-covy-customers}'
         
         if [ $? -eq 0 ]; then
             echo "✅ $function_name created and deployed successfully"
