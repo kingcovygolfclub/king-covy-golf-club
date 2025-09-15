@@ -41,8 +41,8 @@ export default function AdminProductsPage() {
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (product.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (product.brand || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !filterCategory || product.category === filterCategory;
     const matchesStatus = !filterStatus || 
                          (filterStatus === 'low-stock' && product.stock < 5) ||

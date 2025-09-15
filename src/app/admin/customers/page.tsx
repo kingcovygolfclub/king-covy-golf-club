@@ -63,9 +63,9 @@ export default function CustomersPage() {
   };
 
   const filteredCustomers = customers.filter(customer => 
-    customer.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+    (customer.firstName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (customer.lastName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (customer.email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatCurrency = (amount: number) => {
