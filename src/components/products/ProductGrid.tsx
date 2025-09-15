@@ -14,6 +14,8 @@ interface ProductGridProps {
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   const { addItem } = useCart();
+  
+  console.log('ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {

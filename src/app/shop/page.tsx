@@ -170,6 +170,7 @@ export default function ShopPage() {
 
   // Save view mode preference to localStorage
   const handleViewModeChange = (mode: 'grid' | 'list') => {
+    console.log('Changing view mode to:', mode);
     setViewMode(mode);
     if (typeof window !== 'undefined') {
       localStorage.setItem('shopViewMode', mode);
