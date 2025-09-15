@@ -35,24 +35,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
         <Heart className="h-4 w-4 text-gray-400 hover:text-red-500" />
       </button>
       
-      <div className="relative w-full h-64 overflow-hidden">
-        <img
-          src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit: 'cover',
-            display: 'block',
-            zIndex: 10,
-            position: 'relative',
-            border: '3px solid red',
-            backgroundColor: 'yellow'
-          }}
-          onLoad={() => console.log('Image loaded:', product.images[0])}
-          onError={(e) => console.error('Image failed to load:', product.images[0], e)}
-        />
+      <div 
+        className="relative w-full h-64 overflow-hidden bg-cover bg-center bg-no-repeat group-hover:scale-105 transition-transform duration-300"
+        style={{
+          backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'})`,
+          border: '3px solid red',
+          backgroundColor: 'yellow'
+        }}
+        onLoad={() => console.log('Background image loaded:', product.images[0])}
+      >
         {product.originalPrice && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
             Sale
@@ -122,14 +113,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   const ProductListItem: React.FC<{ product: Product }> = ({ product }) => (
     <div className="card group">
       <div className="flex space-x-4 p-4">
-        <div className="relative w-24 h-24 flex-shrink-0">
-          <img
-            src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
-            alt={product.name}
-            className="w-full h-full object-cover rounded-md"
-            onLoad={() => console.log('List image loaded:', product.images[0])}
-            onError={(e) => console.error('List image failed to load:', product.images[0], e)}
-          />
+        <div 
+          className="relative w-24 h-24 flex-shrink-0 bg-cover bg-center bg-no-repeat rounded-md"
+          style={{
+            backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'})`
+          }}
+        >
           {product.originalPrice && (
             <div className="absolute -top-2 -left-2 bg-red-500 text-white px-1 py-0.5 rounded text-xs font-semibold">
               Sale
