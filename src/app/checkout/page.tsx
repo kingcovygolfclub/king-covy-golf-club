@@ -411,7 +411,7 @@ export default function CheckoutPage() {
                   <div key={item.productId} className="flex items-center space-x-3">
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <Image
-                        src={item.product.images[0] || '/placeholder-golf-club.svg'}
+                        src={item.product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
                         alt={item.product.name}
                         fill
                         className="object-cover rounded-md"

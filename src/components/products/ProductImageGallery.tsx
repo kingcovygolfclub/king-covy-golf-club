@@ -19,7 +19,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
       {/* Main Image */}
       <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
         <Image
-          src={images[selectedIndex] || '/placeholder-golf-club.svg'}
+          src={images[selectedIndex] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
           alt={`Product image ${selectedIndex + 1}`}
           fill
           className="object-cover"
@@ -40,7 +40,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
               }`}
             >
               <Image
-                src={image || '/placeholder-golf-club.svg'}
+                src={image || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
                 alt={`Product thumbnail ${index + 1}`}
                 fill
                 className="object-cover"

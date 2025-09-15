@@ -15,7 +15,7 @@ const featuredProducts: Product[] = [
     description: 'Classic blade putter with milled face for consistent roll',
     price: 399.99,
     originalPrice: 449.99,
-    images: ['/products/scotty-cameron-newport-2.jpg'],
+    images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
     category: 'putters',
     brand: 'Scotty Cameron',
     condition: 'excellent',
@@ -56,7 +56,7 @@ const featuredProducts: Product[] = [
     name: 'Titleist TSR3 Driver',
     description: 'Advanced driver with adjustable CG for maximum distance',
     price: 599.99,
-    images: ['/products/titleist-tsr3-driver.jpg'],
+    images: ['https://king-covy-assets.s3.amazonaws.com/products/drivers/titleist-tsr3-driver.svg'],
     category: 'drivers',
     brand: 'Titleist',
     condition: 'new',
@@ -100,7 +100,7 @@ const featuredProducts: Product[] = [
     name: 'Mizuno MP-20 Irons',
     description: 'Forged muscle back irons for skilled players',
     price: 1299.99,
-    images: ['/products/mizuno-mp20-irons.jpg'],
+    images: ['https://king-covy-assets.s3.amazonaws.com/products/irons/mizuno-mp20-irons.svg'],
     category: 'irons',
     brand: 'Mizuno',
     condition: 'like-new',
@@ -160,7 +160,7 @@ const FeaturedProducts: React.FC = () => {
         <div key={product.id} className="card group">
           <div className="relative aspect-square overflow-hidden">
             <Image
-              src={product.images[0] || '/placeholder-golf-club.svg'}
+              src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
               alt={product.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

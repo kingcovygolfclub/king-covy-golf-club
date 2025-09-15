@@ -15,10 +15,10 @@ const mockProduct = {
   price: 399.99,
   originalPrice: 449.99,
   images: [
-    '/placeholder-golf-club.svg',
-    '/placeholder-golf-club.svg',
-    '/placeholder-golf-club.svg',
-    '/placeholder-golf-club.svg'
+    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
+    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
+    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
+    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'
   ],
   category: 'putters' as const,
   brand: 'Scotty Cameron',
