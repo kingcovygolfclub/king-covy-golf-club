@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', 'your-s3-bucket.s3.amazonaws.com', 'your-cloudfront-domain.cloudfront.net'],
+    domains: ['localhost', 'king-covy-assets.s3.amazonaws.com', 'main.d101xso6am1gh0.amplifyapp.com'],
   },
   trailingSlash: false,
   // Add aggressive cache busting with version identifier
