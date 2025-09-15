@@ -178,6 +178,9 @@ export interface InventoryItem {
   status: 'inventory' | 'sold' | 'pending';
   binLocation?: string;
   notes?: string;
+  // Image fields
+  images?: string[]; // Array of image URLs
+  primaryImage?: string; // Main display image
   // Marketing Expense Tracking
   itemType: 'product' | 'marketing_expense'; // New field to distinguish between products and marketing expenses
   marketingExpenseType?: 'online_ad' | 'social_media' | 'email_campaign' | 'content_creation' | 'photography' | 'video_production' | 'other';

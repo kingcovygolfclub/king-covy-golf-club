@@ -49,6 +49,8 @@ function getDefaultNewItem(): Partial<InventoryItem> {
     totalCost: 0,
     status: 'inventory',
     itemType: 'product',
+    images: [],
+    primaryImage: '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -71,6 +73,8 @@ export default function AdminInventoryPage() {
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
   const [newItem, setNewItem] = useState<Partial<InventoryItem>>(getDefaultNewItem());
   const [processing, setProcessing] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -78,6 +82,35 @@ export default function AdminInventoryPage() {
   useEffect(() => {
     loadInventoryItems();
   }, []);
+
+  // Handle image upload
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    const newImages = [...uploadedImages, ...files];
+    setUploadedImages(newImages);
+    
+    // Create preview URLs
+    const newPreviewUrls = files.map(file => URL.createObjectURL(file));
+    setImagePreviewUrls([...imagePreviewUrls, ...newPreviewUrls]);
+  };
+
+  // Remove image
+  const removeImage = (index: number) => {
+    const newImages = uploadedImages.filter((_, i) => i !== index);
+    const newPreviewUrls = imagePreviewUrls.filter((_, i) => i !== index);
+    setUploadedImages(newImages);
+    setImagePreviewUrls(newPreviewUrls);
+    
+    // Update primary image if it was removed
+    if (newItem.primaryImage === imagePreviewUrls[index]) {
+      setNewItem({ ...newItem, primaryImage: newPreviewUrls[0] || '' });
+    }
+  };
+
+  // Set primary image
+  const setPrimaryImage = (imageUrl: string) => {
+    setNewItem({ ...newItem, primaryImage: imageUrl });
+  };
 
   const loadInventoryItems = async () => {
     try {
@@ -96,6 +129,8 @@ export default function AdminInventoryPage() {
           totalCost: item.totalCost || item.purchaseCost || 0,
           status: item.status || 'inventory',
           itemType: item.itemType || 'product',
+          images: item.images || ['/placeholder-golf-club.jpg'],
+          primaryImage: item.primaryImage || item.images?.[0] || '/placeholder-golf-club.jpg',
           marketingExpenseType: item.marketingExpenseType,
           marketingCampaign: item.marketingCampaign,
           marketingPlatform: item.marketingPlatform,
@@ -121,6 +156,8 @@ export default function AdminInventoryPage() {
             totalCost: (product.price || 0) * 0.7,
             status: 'inventory' as const,
             itemType: 'product' as const,
+            images: product.images || ['/placeholder-golf-club.jpg'],
+            primaryImage: product.images?.[0] || '/placeholder-golf-club.jpg',
             createdAt: product.createdAt || new Date().toISOString(),
             updatedAt: product.updatedAt || new Date().toISOString()
           }));
@@ -143,10 +180,18 @@ export default function AdminInventoryPage() {
       // Calculate total cost
       const totalCost = (newItem.purchaseCost || 0) + (newItem.customizationCost || 0);
       
+      // For now, we'll store image URLs as base64 or placeholder URLs
+      // In a real implementation, you'd upload to S3 or another service
+      const imageUrls = imagePreviewUrls.length > 0 
+        ? imagePreviewUrls 
+        : ['/placeholder-golf-club.jpg']; // Default placeholder
+      
       // Prepare item data
       const itemData: Partial<InventoryItem> = {
         ...newItem,
         totalCost,
+        images: imageUrls,
+        primaryImage: newItem.primaryImage || imageUrls[0] || '/placeholder-golf-club.jpg',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -160,12 +205,38 @@ export default function AdminInventoryPage() {
       const response = await apiService.createInventoryItem(itemData);
       
       if (response.success) {
-        // Refresh the inventory list
-        await loadInventoryItems();
+        // Immediately update the frontend with the new item
+        const newInventoryItem: InventoryItem = {
+          ...itemData,
+          itemId: itemData.itemId || '',
+          brand: itemData.brand || '',
+          model: itemData.model || '',
+          clubType: itemData.clubType || 'accessories',
+          condition: itemData.condition || 'new',
+          purchaseCost: itemData.purchaseCost || 0,
+          totalCost: itemData.totalCost || 0,
+          status: itemData.status || 'inventory',
+          itemType: itemData.itemType || 'product',
+          createdAt: itemData.createdAt || new Date().toISOString(),
+          updatedAt: itemData.updatedAt || new Date().toISOString()
+        } as InventoryItem;
+        
+        // Add to the frontend state immediately
+        setInventoryItems(prev => [newInventoryItem, ...prev]);
+        
         // Close modal and reset form
         setShowAddModal(false);
         setNewItem(getDefaultNewItem());
+        setUploadedImages([]);
+        setImagePreviewUrls([]);
+        
+        // Show success message
         alert('Item added successfully!');
+        
+        // Optionally refresh from server to ensure consistency
+        setTimeout(() => {
+          loadInventoryItems();
+        }, 1000);
       } else {
         alert('Error adding item: ' + (response.error || 'Unknown error'));
       }
@@ -622,8 +693,29 @@ export default function AdminInventoryPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{item.brand}</div>
-                    <div className="text-sm text-gray-500">{item.model}</div>
+                    <div className="flex items-center space-x-3">
+                      {/* Product Image */}
+                      <div className="flex-shrink-0">
+                        <img
+                          src={item.primaryImage || item.images?.[0] || '/placeholder-golf-club.jpg'}
+                          alt={`${item.brand} ${item.model}`}
+                          className="w-12 h-12 object-cover rounded-lg border"
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder-golf-club.jpg';
+                          }}
+                        />
+                      </div>
+                      {/* Brand/Model Info */}
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{item.brand}</div>
+                        <div className="text-sm text-gray-500">{item.model}</div>
+                        {item.images && item.images.length > 1 && (
+                          <div className="text-xs text-gray-400">
+                            +{item.images.length - 1} more
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -937,6 +1029,81 @@ export default function AdminInventoryPage() {
                       placeholder="e.g., A1-15"
                     />
                   </div>
+                </div>
+
+                {/* Image Upload Section */}
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Images
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
+                      <svg className="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <span className="text-sm text-gray-600">
+                        Click to upload images or drag and drop
+                      </span>
+                      <span className="text-xs text-gray-500 mt-1">
+                        PNG, JPG, GIF up to 10MB each
+                      </span>
+                    </label>
+                  </div>
+                  
+                  {/* Image Previews */}
+                  {imagePreviewUrls.length > 0 && (
+                    <div className="mt-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {imagePreviewUrls.map((url, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={url}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-24 object-cover rounded-lg border"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-lg transition-all duration-200 flex items-center justify-center">
+                              <div className="opacity-0 group-hover:opacity-100 flex space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setPrimaryImage(url)}
+                                  className={`px-2 py-1 text-xs rounded ${
+                                    newItem.primaryImage === url
+                                      ? 'bg-blue-600 text-white'
+                                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                                  }`}
+                                >
+                                  {newItem.primaryImage === url ? 'Primary' : 'Set Primary'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeImage(index)}
+                                  className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                            {newItem.primaryImage === url && (
+                              <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1 rounded">
+                                Primary
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Notes */}
