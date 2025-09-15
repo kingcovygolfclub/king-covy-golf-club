@@ -99,11 +99,11 @@ export default function AnalyticsPage() {
 
       // Load inventory items for analytics
       const inventoryResponse = await apiService.getInventoryItems({ limit: 1000 });
-      const inventoryItems = inventoryResponse.success ? inventoryResponse.data : [];
+      const inventoryItems = inventoryResponse.success ? inventoryResponse.data || [] : [];
 
       // Load orders for sales trends
       const ordersResponse = await apiService.getOrders({ limit: 1000 });
-      const orders = ordersResponse.success ? ordersResponse.data : [];
+      const orders = ordersResponse.success ? ordersResponse.data || [] : [];
 
       // Generate mock analytics data (in production, this would come from your backend)
       generateAnalyticsData(inventoryItems, orders);
@@ -385,7 +385,7 @@ export default function AnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ segment, percent }) => `${segment} ${(percent * 100).toFixed(0)}%`}
+                  label={(entry: any) => `${entry.name} ${(entry.percent * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="count"
