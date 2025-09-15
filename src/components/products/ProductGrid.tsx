@@ -37,7 +37,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       <div 
         className="relative w-full h-64 overflow-hidden group-hover:scale-105 transition-transform duration-300"
         style={{
-          backgroundImage: `url(${product.images[0] || 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Golf+Club'}?v=${Date.now()}&cache=${Math.random()})`,
+          backgroundImage: `url(${product.images[0] || 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Golf+Club'}?v=${Date.now()}&cache=${Math.random()}&force=${Math.random()})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -119,7 +119,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
         <div 
           className="relative w-24 h-24 flex-shrink-0 bg-cover bg-center bg-no-repeat rounded-md"
           style={{
-            backgroundImage: `url(${product.images[0] || 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Golf+Club'}?v=${Date.now()})`
+            backgroundImage: `url(${product.images[0] || 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Golf+Club'}?v=${Date.now()}&force=${Math.random()})`
           }}
         >
           {product.originalPrice && (
