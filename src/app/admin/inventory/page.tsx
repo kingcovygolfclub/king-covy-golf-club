@@ -112,6 +112,31 @@ export default function AdminInventoryPage() {
     setNewItem({ ...newItem, primaryImage: imageUrl });
   };
 
+  // Delete inventory item
+  const handleDeleteItem = async (itemId: string) => {
+    if (!confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setProcessing(true);
+      const response = await apiService.deleteInventoryItem(itemId);
+      
+      if (response.success) {
+        // Remove item from frontend state immediately
+        setInventoryItems(prev => prev.filter(item => item.itemId !== itemId));
+        alert('Item deleted successfully!');
+      } else {
+        alert('Error deleting item: ' + (response.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Error deleting item. Please try again.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const loadInventoryItems = async () => {
     try {
       setLoading(true);
@@ -202,7 +227,63 @@ export default function AdminInventoryPage() {
         itemData.condition = 'new'; // Default condition
       }
 
+      // Create inventory item
       const response = await apiService.createInventoryItem(itemData);
+      
+      // Also create product if it's a product type (not marketing expense)
+      if (response.success && newItem.itemType === 'product') {
+        try {
+          const productData = {
+            id: itemData.itemId,
+            name: `${itemData.brand} ${itemData.model}`,
+            description: `High-quality ${itemData.brand} ${itemData.model} ${itemData.clubType}`,
+            price: (itemData.totalCost || 0) * 1.4, // Mark up by 40% for retail price
+            originalPrice: (itemData.totalCost || 0) * 1.6, // Higher original price
+            images: itemData.images || ['/placeholder-golf-club.jpg'],
+            category: itemData.clubType,
+            brand: itemData.brand,
+            condition: itemData.condition,
+            specifications: {
+              model: itemData.model,
+              year: new Date().getFullYear(),
+              weight: 'Standard',
+              finish: 'Premium',
+              length: 'Standard',
+              material: 'High Quality'
+            },
+            stock: 1, // Start with 1 in stock
+            isCustomizable: true,
+            customizationOptions: {
+              engraving: {
+                available: true,
+                maxLength: 20,
+                locations: ['toe', 'heel', 'face']
+              },
+              grip: {
+                available: true,
+                options: [
+                  { id: 'standard', name: 'Standard Grip', price: 0, colors: ['black', 'white'] },
+                  { id: 'premium', name: 'Premium Grip', price: 15, colors: ['black', 'white', 'blue'] }
+                ]
+              },
+              shaft: {
+                available: false,
+                options: []
+              }
+            },
+            createdAt: itemData.createdAt,
+            updatedAt: itemData.updatedAt,
+            featured: false,
+            tags: [itemData.brand?.toLowerCase(), itemData.clubType, 'new'],
+            status: 'active'
+          };
+
+          // Create product in products table
+          await apiService.createProduct(productData);
+        } catch (productError) {
+          console.warn('Failed to create product, but inventory item was created:', productError);
+        }
+      }
       
       if (response.success) {
         // Immediately update the frontend with the new item
@@ -776,14 +857,10 @@ export default function AdminInventoryPage() {
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this item?')) {
-                            // Handle delete
-                            console.log('Delete item:', item.itemId);
-                          }
-                        }}
+                        onClick={() => handleDeleteItem(item.itemId)}
                         className="text-red-600 hover:text-red-900"
                         title="Delete Item"
+                        disabled={processing}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
