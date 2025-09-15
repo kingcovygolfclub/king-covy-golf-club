@@ -16,6 +16,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   const { addItem } = useCart();
   
   console.log('ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
+  console.log('First product images:', products[0]?.images);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -40,6 +41,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
           alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
+          onLoad={() => console.log('Image loaded:', product.images[0])}
+          onError={(e) => console.error('Image failed to load:', product.images[0], e)}
         />
         {product.originalPrice && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
@@ -116,6 +119,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
             alt={product.name}
             fill
             className="object-cover rounded-md"
+            onLoad={() => console.log('List image loaded:', product.images[0])}
+            onError={(e) => console.error('List image failed to load:', product.images[0], e)}
           />
           {product.originalPrice && (
             <div className="absolute -top-2 -left-2 bg-red-500 text-white px-1 py-0.5 rounded text-xs font-semibold">
