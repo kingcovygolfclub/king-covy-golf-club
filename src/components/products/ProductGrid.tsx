@@ -39,8 +39,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
         className="relative w-full h-64 overflow-hidden bg-cover bg-center bg-no-repeat group-hover:scale-105 transition-transform duration-300"
         style={{
           backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'})`,
-          border: '3px solid red',
-          backgroundColor: 'yellow'
+          border: '3px solid red'
         }}
         onLoad={() => console.log('Background image loaded:', product.images[0])}
       >
