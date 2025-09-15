@@ -1,174 +1,517 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, Shield, Truck } from 'lucide-react';
+import { ArrowRight, Star, Shield, Truck, Trophy, Target, Zap, CircleDot } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import FeaturedProducts from '@/components/products/FeaturedProducts';
 
-export default function HomePage() {
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0 }
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { opacity: 1, x: 0 }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1 }
+};
+
+// Animated Text Component
+const AnimatedText = ({ text, className = "" }: { text: string; className?: string }) => {
+  const words = text.split(" ");
+  
   return (
-    <div className="min-h-screen">
+    <motion.h1 
+      className={className}
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
+      {words.map((word, index) => (
+        <motion.span
+          key={index}
+          className="inline-block mr-2"
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { 
+              opacity: 1, 
+              y: 0,
+              transition: { duration: 0.5, delay: index * 0.1 }
+            }
+          }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </motion.h1>
+  );
+};
+
+// Animated Feature Card Component
+const AnimatedFeatureCard = ({ icon: Icon, title, description, delay = 0 }: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  delay?: number;
+}) => {
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={scaleIn}
+      transition={{ duration: 0.6, delay }}
+      className="text-center group"
+    >
+      <motion.div 
+        className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300"
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Icon className="h-8 w-8 text-white" />
+      </motion.div>
+      <h3 className="text-xl font-bold text-gray-900 mb-3">
+        {title}
+      </h3>
+      <p className="text-gray-600 leading-relaxed">
+        {description}
+      </p>
+    </motion.div>
+  );
+};
+
+export default function HomePage() {
+  const [heroRef, heroInView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  const [featuresRef, featuresInView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  const [ctaRef, ctaInView] = useInView({
+    threshold: 0.1,
+    triggerOnce: true
+  });
+
+  return (
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-700 to-blue-800">
+          <motion.div
+            className="absolute inset-0 bg-black opacity-30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.3 }}
+            transition={{ duration: 2 }}
+          />
+          
+          {/* Floating Golf Balls */}
+          {typeof window !== 'undefined' && [...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-4 h-4 bg-white rounded-full opacity-20"
+              initial={{
+                x: Math.random() * (window.innerWidth || 1200),
+                y: Math.random() * (window.innerHeight || 800),
+              }}
+              animate={{
+                y: [0, -30, 0],
+                x: [0, Math.random() * 50 - 25, 0],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+
+        <div ref={heroRef} className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-                Premium Golf Equipment & Collectibles
-              </h1>
-              <p className="text-xl text-primary-100 mb-8 leading-relaxed">
+            <motion.div
+              initial="hidden"
+              animate={heroInView ? "visible" : "hidden"}
+              variants={fadeInLeft}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-6"
+              >
+                <CircleDot className="h-4 w-4 mr-2" />
+                Premium Golf Equipment
+              </motion.div>
+              
+              <AnimatedText 
+                text="Premium Golf Equipment & Collectibles"
+                className="text-4xl lg:text-6xl font-bold mb-6 leading-tight text-white"
+              />
+              
+              <motion.p 
+                className="text-xl text-white/90 mb-8 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
                 Discover boutique and collector's golf clubs, putters, and accessories. 
                 Each piece is carefully selected for quality and authenticity, with custom 
                 engravings and personalization options available.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  href="/shop"
-                  className="inline-flex items-center justify-center bg-white text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors"
+              </motion.p>
+              
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Shop Collection
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-                <button className="inline-flex items-center justify-center border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white hover:text-primary-600 transition-colors">
-                  Learn More
-                </button>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="bg-white rounded-2xl p-8 shadow-2xl">
-                <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-primary-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">K</span>
-                    </div>
-                    <p className="text-gray-600">Featured Product Image</p>
-                  </div>
+                  <Link
+                    href="/shop"
+                    className="inline-flex items-center justify-center bg-white text-emerald-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    Shop Collection
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <button className="inline-flex items-center justify-center border-2 border-white text-white font-semibold px-8 py-4 rounded-xl hover:bg-white hover:text-emerald-600 transition-all duration-300 backdrop-blur-sm">
+                    Learn More
+                  </button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+
+            <motion.div 
+              className="relative"
+              initial="hidden"
+              animate={heroInView ? "visible" : "hidden"}
+              variants={fadeInRight}
+            >
+              <motion.div 
+                className="bg-white rounded-3xl p-8 shadow-2xl"
+                whileHover={{ scale: 1.02, rotateY: 5 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="aspect-square bg-gradient-to-br from-emerald-100 to-teal-200 rounded-2xl flex items-center justify-center relative overflow-hidden">
+                  <motion.div
+                    className="text-center"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.8, delay: 1 }}
+                  >
+                    <motion.div 
+                      className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                    >
+                      <CircleDot className="text-white text-2xl" />
+                    </motion.div>
+                    <p className="text-gray-600 font-medium">Featured Product</p>
+                  </motion.div>
+                  
+                  {/* Animated background elements */}
+                  <motion.div
+                    className="absolute top-4 right-4 w-8 h-8 bg-emerald-400 rounded-full opacity-20"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [0.2, 0.4, 0.2]
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <motion.div
+                    className="absolute bottom-4 left-4 w-6 h-6 bg-teal-400 rounded-full opacity-20"
+                    animate={{ 
+                      scale: [1, 1.3, 1],
+                      opacity: [0.2, 0.5, 0.2]
+                    }}
+                    transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                  />
                 </div>
-              </div>
-              {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-semibold">
+              </motion.div>
+              
+              {/* Floating badges */}
+              <motion.div 
+                className="absolute -top-4 -right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                whileHover={{ scale: 1.1 }}
+              >
                 New Arrivals
-              </div>
-              <div className="absolute -bottom-4 -left-4 bg-green-400 text-green-900 px-4 py-2 rounded-full text-sm font-semibold">
+              </motion.div>
+              <motion.div 
+                className="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-400 to-emerald-400 text-green-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={heroInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                transition={{ duration: 0.6, delay: 1.4 }}
+                whileHover={{ scale: 1.1 }}
+              >
                 Free Shipping
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg mb-4">
-                <Star className="h-6 w-6 text-primary-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Premium Quality
-              </h3>
-              <p className="text-gray-600">
-                Hand-picked boutique and collector's golf equipment from trusted brands
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg mb-4">
-                <Shield className="h-6 w-6 text-primary-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Authenticity Guaranteed
-              </h3>
-              <p className="text-gray-600">
-                Every item is verified for authenticity with detailed condition reports
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg mb-4">
-                <Truck className="h-6 w-6 text-primary-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Fast Shipping
-              </h3>
-              <p className="text-gray-600">
-                Secure packaging and fast delivery to protect your investment
-              </p>
-            </div>
-          </div>
+          <motion.div 
+            ref={featuresRef}
+            initial="hidden"
+            animate={featuresInView ? "visible" : "hidden"}
+            variants={fadeInUp}
+            className="text-center mb-16"
+          >
+            <motion.h2 
+              className="text-4xl font-bold text-gray-900 mb-4"
+              variants={fadeInUp}
+            >
+              Why Choose King Covy?
+            </motion.h2>
+            <motion.p 
+              className="text-xl text-gray-600 max-w-2xl mx-auto"
+              variants={fadeInUp}
+            >
+              Experience the difference with our premium golf equipment and exceptional service
+            </motion.p>
+          </motion.div>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            initial="hidden"
+            animate={featuresInView ? "visible" : "hidden"}
+            variants={staggerContainer}
+          >
+            <AnimatedFeatureCard
+              icon={Trophy}
+              title="Premium Quality"
+              description="Hand-picked boutique and collector's golf equipment from trusted brands and verified sources"
+              delay={0}
+            />
+            <AnimatedFeatureCard
+              icon={Shield}
+              title="Authenticity Guaranteed"
+              description="Every item is verified for authenticity with detailed condition reports and certificates"
+              delay={0.2}
+            />
+            <AnimatedFeatureCard
+              icon={Truck}
+              title="Fast & Secure Shipping"
+              description="Secure packaging and fast delivery to protect your investment with full insurance coverage"
+              delay={0.4}
+            />
+          </motion.div>
         </div>
       </section>
 
       {/* Featured Products Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <section className="py-20 bg-white">
+        <motion.div 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center mb-16">
+            <motion.h2 
+              className="text-4xl font-bold text-gray-900 mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
               Featured Products
-            </h2>
-            <p className="text-lg text-gray-600">
+            </motion.h2>
+            <motion.p 
+              className="text-xl text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               Hand-picked premium golf equipment
-            </p>
+            </motion.p>
           </div>
           <FeaturedProducts />
-        </div>
+        </motion.div>
       </section>
 
       {/* Categories Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <motion.div 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-center mb-16">
+            <motion.h2 
+              className="text-4xl font-bold text-gray-900 mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
               Shop by Category
-            </h2>
-            <p className="text-lg text-gray-600">
+            </motion.h2>
+            <motion.p 
+              className="text-xl text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               Find exactly what you're looking for
-            </p>
+            </motion.p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          
+          <motion.div 
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            variants={staggerContainer}
+            viewport={{ once: true }}
+          >
             {[
-              { name: 'Drivers', href: '/shop?category=drivers' },
-              { name: 'Irons', href: '/shop?category=irons' },
-              { name: 'Putters', href: '/shop?category=putters' },
-              { name: 'Wedges', href: '/shop?category=wedges' },
-              { name: 'Fairway Woods', href: '/shop?category=fairway-woods' },
-              { name: 'Hybrids', href: '/shop?category=hybrids' },
-              { name: 'Accessories', href: '/shop?category=accessories' },
-              { name: 'Collectibles', href: '/shop?category=collectibles' },
-            ].map((category) => (
-              <Link
+              { name: 'Drivers', href: '/shop?category=drivers', icon: '🏌️' },
+              { name: 'Irons', href: '/shop?category=irons', icon: '⚡' },
+              { name: 'Putters', href: '/shop?category=putters', icon: '🎯' },
+              { name: 'Wedges', href: '/shop?category=wedges', icon: '🔧' },
+              { name: 'Fairway Woods', href: '/shop?category=fairway-woods', icon: '🌳' },
+              { name: 'Hybrids', href: '/shop?category=hybrids', icon: '🔀' },
+              { name: 'Accessories', href: '/shop?category=accessories', icon: '🎒' },
+              { name: 'Collectibles', href: '/shop?category=collectibles', icon: '💎' },
+            ].map((category, index) => (
+              <motion.div
                 key={category.name}
-                href={category.href}
-                className="group relative overflow-hidden rounded-lg aspect-square bg-white shadow-md hover:shadow-lg transition-shadow"
+                variants={scaleIn}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-700 opacity-0 group-hover:opacity-20 transition-opacity" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                <Link
+                  href={category.href}
+                  className="group relative overflow-hidden rounded-2xl aspect-square bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center"
+                >
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                  />
+                  <motion.div 
+                    className="text-4xl mb-2"
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                  >
+                    {category.icon}
+                  </motion.div>
+                  <span className="text-lg font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors duration-300">
                     {category.name}
                   </span>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Elevate Your Game?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Browse our collection of premium golf equipment and find your next favorite club
-          </p>
-          <Link
-            href="/shop"
-            className="inline-flex items-center bg-white text-primary-600 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+      <section className="py-20 bg-gradient-to-r from-emerald-600 via-teal-700 to-blue-800 relative overflow-hidden">
+        {/* Animated background elements */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2 }}
+        >
+          {typeof window !== 'undefined' && [...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white rounded-full opacity-30"
+              initial={{
+                x: Math.random() * (window.innerWidth || 1200),
+                y: Math.random() * (window.innerHeight || 800),
+              }}
+              animate={{
+                y: [0, -50, 0],
+                x: [0, Math.random() * 100 - 50, 0],
+              }}
+              transition={{
+                duration: 4 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </motion.div>
+
+        <motion.div 
+          ref={ctaRef}
+          className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          initial="hidden"
+          animate={ctaInView ? "visible" : "hidden"}
+          variants={fadeInUp}
+        >
+          <motion.h2 
+            className="text-4xl lg:text-5xl font-bold text-white mb-6"
+            variants={fadeInUp}
           >
-            Shop Now
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </div>
+            Ready to Elevate Your Game?
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-white/90 mb-10 max-w-2xl mx-auto"
+            variants={fadeInUp}
+          >
+            Browse our collection of premium golf equipment and find your next favorite club
+          </motion.p>
+          <motion.div
+            variants={fadeInUp}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link
+              href="/shop"
+              className="inline-flex items-center bg-white text-emerald-600 font-semibold px-10 py-4 rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl text-lg"
+            >
+              Shop Now
+              <ArrowRight className="ml-2 h-6 w-6" />
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
     </div>
   );
