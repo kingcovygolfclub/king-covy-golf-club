@@ -196,6 +196,7 @@ export interface DashboardMetrics {
   averageProfitMargin: number; // Average for sold items
   totalOrders: number;
   pendingOrders: number;
+  totalCustomers: number;
 }
 
 // Invoice and Pick Slip Types

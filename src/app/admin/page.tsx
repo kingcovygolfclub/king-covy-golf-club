@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { 
   Package, 
   ShoppingCart, 
+  Users,
   DollarSign,
   TrendingUp,
   AlertTriangle,
@@ -30,7 +31,8 @@ export default function AdminDashboard() {
     totalNetProfit: 0,
     averageProfitMargin: 0,
     totalOrders: 0,
-    pendingOrders: 0
+    pendingOrders: 0,
+    totalCustomers: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +61,8 @@ export default function AdminDashboard() {
           totalNetProfit: 0, // Will be calculated
           averageProfitMargin: 0, // Will be calculated
           totalOrders: metricsResponse.data.totalOrders || 0,
-          pendingOrders: metricsResponse.data.pendingOrders || 0
+          pendingOrders: metricsResponse.data.pendingOrders || 0,
+          totalCustomers: metricsResponse.data.totalCustomers || 0
         };
         setMetrics(transformedMetrics);
       } else {
@@ -80,7 +83,8 @@ export default function AdminDashboard() {
           totalNetProfit: 0,
           averageProfitMargin: 0,
           totalOrders: 0,
-          pendingOrders: 0
+          pendingOrders: 0,
+          totalCustomers: 0
         };
 
         setMetrics(fallbackMetrics);
@@ -108,11 +112,11 @@ export default function AdminDashboard() {
       href: '/admin/analytics'
     },
     {
-      name: 'Inventory Cost Value',
-      value: formatCurrency(metrics.inventoryCostValue),
-      icon: Warehouse,
-      color: 'bg-blue-500',
-      href: '/admin/inventory'
+      name: 'Total Customers',
+      value: metrics.totalCustomers || 0,
+      icon: Users,
+      color: 'bg-purple-500',
+      href: '/admin/customers'
     },
     {
       name: 'Total Net Profit',
@@ -125,7 +129,7 @@ export default function AdminDashboard() {
       name: 'Average Profit Margin',
       value: `${metrics.averageProfitMargin.toFixed(1)}%`,
       icon: Percent,
-      color: 'bg-purple-500',
+      color: 'bg-indigo-500',
       href: '/admin/analytics'
     }
   ];
@@ -135,7 +139,7 @@ export default function AdminDashboard() {
       name: 'Total Orders',
       value: metrics.totalOrders,
       icon: ShoppingCart,
-      color: 'bg-indigo-500',
+      color: 'bg-blue-500',
       href: '/admin/orders'
     },
     {
@@ -144,6 +148,20 @@ export default function AdminDashboard() {
       icon: AlertTriangle,
       color: 'bg-orange-500',
       href: '/admin/orders?status=pending'
+    },
+    {
+      name: 'Inventory Value',
+      value: formatCurrency(metrics.inventoryCostValue),
+      icon: Warehouse,
+      color: 'bg-teal-500',
+      href: '/admin/inventory'
+    },
+    {
+      name: 'Total Revenue',
+      value: formatCurrency(metrics.totalRevenue),
+      icon: TrendingUp,
+      color: 'bg-green-600',
+      href: '/admin/analytics'
     }
   ];
 
@@ -209,7 +227,7 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/inventory"
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -223,6 +241,13 @@ export default function AdminDashboard() {
           >
             <ShoppingCart className="h-5 w-5 text-gray-400 mr-3" />
             <span className="font-medium text-gray-900">View Orders</span>
+          </Link>
+          <Link
+            href="/admin/customers"
+            className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Users className="h-5 w-5 text-gray-400 mr-3" />
+            <span className="font-medium text-gray-900">Manage Customers</span>
           </Link>
           <Link
             href="/admin/analytics"

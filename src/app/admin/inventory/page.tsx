@@ -17,7 +17,14 @@ import {
   Trash2,
   DollarSign,
   Calendar,
-  MapPin
+  MapPin,
+  BarChart3,
+  Target,
+  RefreshCw,
+  Eye,
+  Star,
+  TrendingUp as TrendingUpIcon,
+  Zap
 } from 'lucide-react';
 import { apiService } from '@/services/api';
 import { InventoryItem, ProductCategory, ProductCondition } from '@/types';
@@ -41,7 +48,11 @@ export default function AdminInventoryPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
   useEffect(() => {
     loadInventoryItems();
@@ -126,6 +137,64 @@ export default function AdminInventoryPage() {
     }
   };
 
+  // Advanced inventory analytics
+  const getInventoryInsights = () => {
+    const totalValue = filteredItems.reduce((sum, item) => sum + item.totalCost, 0);
+    const avgProfitMargin = filteredItems
+      .filter(item => item.status === 'sold' && item.profitMargin)
+      .reduce((sum, item, _, arr) => sum + (item.profitMargin || 0) / arr.length, 0);
+    
+    const slowMovingItems = filteredItems
+      .filter(item => {
+        const daysInInventory = Math.floor((Date.now() - new Date(item.createdAt).getTime()) / (1000 * 60 * 60 * 24));
+        return daysInInventory > 90 && item.status === 'inventory';
+      });
+
+    const fastMovingItems = filteredItems
+      .filter(item => item.status === 'sold')
+      .sort((a, b) => new Date(a.saleDate || '').getTime() - new Date(b.saleDate || '').getTime())
+      .slice(0, 5);
+
+    return {
+      totalValue,
+      avgProfitMargin,
+      slowMovingItems,
+      fastMovingItems,
+      turnoverRate: filteredItems.filter(item => item.status === 'sold').length / Math.max(filteredItems.length, 1)
+    };
+  };
+
+  const insights = getInventoryInsights();
+
+  // Sort and filter functions
+  const sortedAndFilteredItems = filteredItems.sort((a, b) => {
+    let aValue, bValue;
+    
+    switch (sortBy) {
+      case 'totalCost':
+        aValue = a.totalCost;
+        bValue = b.totalCost;
+        break;
+      case 'createdAt':
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+        break;
+      case 'profitMargin':
+        aValue = a.profitMargin || 0;
+        bValue = b.profitMargin || 0;
+        break;
+      default:
+        aValue = a.itemId;
+        bValue = b.itemId;
+    }
+
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -140,9 +209,16 @@ export default function AdminInventoryPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
-          <p className="text-gray-600">Track your golf club inventory with Excel-based metrics</p>
+          <p className="text-gray-600">Track your golf club inventory with Excel-based metrics and advanced analytics</p>
         </div>
         <div className="flex space-x-3">
+          <button
+            onClick={() => setShowAnalyticsModal(true)}
+            className="btn-secondary flex items-center"
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Analytics
+          </button>
           <button
             onClick={() => setShowImportModal(true)}
             className="btn-secondary flex items-center"
@@ -218,9 +294,71 @@ export default function AdminInventoryPage() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Industry Best Practices - Inventory Insights */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-blue-900">Inventory Insights</h3>
+            <Target className="h-6 w-6 text-blue-600" />
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-blue-700">Turnover Rate</span>
+              <span className="font-semibold text-blue-900">{(insights.turnoverRate * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-blue-700">Avg Profit Margin</span>
+              <span className="font-semibold text-blue-900">{insights.avgProfitMargin.toFixed(1)}%</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-blue-700">Slow Moving Items</span>
+              <span className="font-semibold text-blue-900">{insights.slowMovingItems.length}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-green-900">Recommendations</h3>
+            <Zap className="h-6 w-6 text-green-600" />
+          </div>
+          <div className="space-y-2">
+            {insights.slowMovingItems.length > 0 && (
+              <p className="text-sm text-green-700">
+                • Consider promoting {insights.slowMovingItems.length} slow-moving items
+              </p>
+            )}
+            <p className="text-sm text-green-700">
+              • Focus on high-margin categories for better profitability
+            </p>
+            <p className="text-sm text-green-700">
+              • Optimize pricing strategy based on market trends
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-purple-900">Quick Actions</h3>
+            <TrendingUpIcon className="h-6 w-6 text-purple-600" />
+          </div>
+          <div className="space-y-2">
+            <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
+              • Generate inventory report
+            </button>
+            <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
+              • Export to Excel
+            </button>
+            <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
+              • Set up low stock alerts
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Filters and Controls */}
       <div className="bg-white p-4 rounded-lg border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
@@ -270,6 +408,30 @@ export default function AdminInventoryPage() {
             <option value="good">Good</option>
             <option value="fair">Fair</option>
           </select>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          >
+            <option value="createdAt">Sort by Date</option>
+            <option value="totalCost">Sort by Cost</option>
+            <option value="profitMargin">Sort by Profit</option>
+            <option value="itemId">Sort by ID</option>
+          </select>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
+            </button>
+            <button
+              onClick={() => setViewMode(viewMode === 'table' ? 'grid' : 'table')}
+              className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              {viewMode === 'table' ? '⊞' : '☰'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -303,7 +465,7 @@ export default function AdminInventoryPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredItems.map((item) => (
+              {sortedAndFilteredItems.map((item) => (
                 <tr key={item.itemId} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{item.itemId}</div>
