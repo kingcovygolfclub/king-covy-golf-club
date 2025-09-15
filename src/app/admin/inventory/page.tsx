@@ -33,6 +33,25 @@ interface InventoryFilters {
   status: 'all' | 'inventory' | 'sold' | 'pending';
   clubType: 'all' | ProductCategory;
   condition: 'all' | ProductCondition;
+  itemType: 'all' | 'product' | 'marketing_expense';
+}
+
+// Helper function to get default new item
+function getDefaultNewItem(): Partial<InventoryItem> {
+  return {
+    itemId: '',
+    brand: '',
+    model: '',
+    clubType: 'drivers',
+    condition: 'new',
+    purchaseCost: 0,
+    customizationCost: 0,
+    totalCost: 0,
+    status: 'inventory',
+    itemType: 'product',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
 }
 
 export default function AdminInventoryPage() {
@@ -42,13 +61,15 @@ export default function AdminInventoryPage() {
   const [filters, setFilters] = useState<InventoryFilters>({
     status: 'all',
     clubType: 'all',
-    condition: 'all'
+    condition: 'all',
+    itemType: 'all'
   });
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
+  const [newItem, setNewItem] = useState<Partial<InventoryItem>>(getDefaultNewItem());
   const [processing, setProcessing] = useState(false);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -78,6 +99,7 @@ export default function AdminInventoryPage() {
             purchaseCost: product.price * 0.7, // Estimate purchase cost
             totalCost: product.price * 0.7,
             status: 'inventory' as const,
+            itemType: 'product' as const,
             createdAt: product.createdAt,
             updatedAt: product.updatedAt
           }));
@@ -91,6 +113,49 @@ export default function AdminInventoryPage() {
     }
   };
 
+  const handleAddItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      setProcessing(true);
+      
+      // Calculate total cost
+      const totalCost = (newItem.purchaseCost || 0) + (newItem.customizationCost || 0);
+      
+      // Prepare item data
+      const itemData: Partial<InventoryItem> = {
+        ...newItem,
+        totalCost,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // For marketing expenses, set appropriate defaults
+      if (newItem.itemType === 'marketing_expense') {
+        itemData.clubType = 'accessories'; // Default category for marketing expenses
+        itemData.condition = 'new'; // Default condition
+      }
+
+      const response = await apiService.createInventoryItem(itemData);
+      
+      if (response.success) {
+        // Refresh the inventory list
+        await loadInventoryItems();
+        // Close modal and reset form
+        setShowAddModal(false);
+        setNewItem(getDefaultNewItem());
+        alert('Item added successfully!');
+      } else {
+        alert('Error adding item: ' + (response.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error adding item:', error);
+      alert('Error adding item. Please try again.');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const filteredItems = inventoryItems.filter(item => {
     const matchesSearch = 
       item.itemId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,14 +165,16 @@ export default function AdminInventoryPage() {
     const matchesStatus = filters.status === 'all' || item.status === filters.status;
     const matchesClubType = filters.clubType === 'all' || item.clubType === filters.clubType;
     const matchesCondition = filters.condition === 'all' || item.condition === filters.condition;
+    const matchesItemType = filters.itemType === 'all' || item.itemType === filters.itemType;
     
-    return matchesSearch && matchesStatus && matchesClubType && matchesCondition;
+    return matchesSearch && matchesStatus && matchesClubType && matchesCondition && matchesItemType;
   });
 
   const stats = {
     totalItems: inventoryItems.length,
     itemsInInventory: inventoryItems.filter(item => item.status === 'inventory').length,
     itemsSold: inventoryItems.filter(item => item.status === 'sold').length,
+    marketingExpenses: inventoryItems.filter(item => item.itemType === 'marketing_expense').length,
     inventoryCostValue: inventoryItems
       .filter(item => item.status === 'inventory')
       .reduce((sum, item) => sum + item.totalCost, 0),
@@ -116,7 +183,10 @@ export default function AdminInventoryPage() {
       .reduce((sum, item) => sum + (item.soldPrice || 0), 0),
     totalNetProfit: inventoryItems
       .filter(item => item.status === 'sold')
-      .reduce((sum, item) => sum + (item.netRevenue || 0), 0)
+      .reduce((sum, item) => sum + (item.netRevenue || 0), 0),
+    totalMarketingSpend: inventoryItems
+      .filter(item => item.itemType === 'marketing_expense')
+      .reduce((sum, item) => sum + (item.marketingSpend || 0), 0)
   };
 
   const formatCurrency = (amount: number) => {
@@ -237,7 +307,7 @@ export default function AdminInventoryPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center">
             <Package className="h-8 w-8 text-blue-500" />
@@ -292,6 +362,24 @@ export default function AdminInventoryPage() {
             </div>
           </div>
         </div>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="flex items-center">
+            <TrendingUp className="h-8 w-8 text-purple-500" />
+            <div className="ml-3">
+              <p className="text-sm text-gray-600">Marketing Expenses</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.marketingExpenses}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
+          <div className="flex items-center">
+            <DollarSign className="h-8 w-8 text-purple-500" />
+            <div className="ml-3">
+              <p className="text-sm text-gray-600">Marketing Spend</p>
+              <p className="text-lg font-bold text-gray-900">{formatCurrency(stats.totalMarketingSpend)}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Industry Best Practices - Inventory Insights */}
@@ -314,6 +402,10 @@ export default function AdminInventoryPage() {
               <span className="text-sm text-blue-700">Slow Moving Items</span>
               <span className="font-semibold text-blue-900">{insights.slowMovingItems.length}</span>
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-blue-700">Marketing Expenses</span>
+              <span className="font-semibold text-blue-900">{stats.marketingExpenses}</span>
+            </div>
           </div>
         </div>
 
@@ -334,6 +426,14 @@ export default function AdminInventoryPage() {
             <p className="text-sm text-green-700">
               • Optimize pricing strategy based on market trends
             </p>
+            {stats.totalMarketingSpend > 0 && (
+              <p className="text-sm text-green-700">
+                • Track ROI on ${stats.totalMarketingSpend.toFixed(0)} marketing spend
+              </p>
+            )}
+            <p className="text-sm text-green-700">
+              • Analyze marketing expense effectiveness by platform
+            </p>
           </div>
         </div>
 
@@ -351,6 +451,12 @@ export default function AdminInventoryPage() {
             </button>
             <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
               • Set up low stock alerts
+            </button>
+            <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
+              • Track marketing campaign performance
+            </button>
+            <button className="w-full text-left text-sm text-purple-700 hover:text-purple-900">
+              • Analyze marketing ROI by platform
             </button>
           </div>
         </div>
@@ -409,6 +515,15 @@ export default function AdminInventoryPage() {
             <option value="fair">Fair</option>
           </select>
           <select
+            value={filters.itemType}
+            onChange={(e) => setFilters({...filters, itemType: e.target.value as any})}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          >
+            <option value="all">All Types</option>
+            <option value="product">Products</option>
+            <option value="marketing_expense">Marketing Expenses</option>
+          </select>
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -445,16 +560,22 @@ export default function AdminInventoryPage() {
                   Item ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Brand / Model
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Club Type
+                  Category
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Condition
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Cost / Price
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Marketing
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -469,6 +590,15 @@ export default function AdminInventoryPage() {
                 <tr key={item.itemId} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{item.itemId}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      item.itemType === 'marketing_expense' 
+                        ? 'bg-purple-100 text-purple-800' 
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {item.itemType === 'marketing_expense' ? 'Marketing' : 'Product'}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{item.brand}</div>
@@ -492,6 +622,27 @@ export default function AdminInventoryPage() {
                       <div className="text-sm text-green-600">
                         Sold: {formatCurrency(item.soldPrice)}
                       </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {item.itemType === 'marketing_expense' && item.marketingSpend ? (
+                      <div className="text-sm">
+                        <div className="text-purple-600 font-medium">
+                          {formatCurrency(item.marketingSpend)}
+                        </div>
+                        {item.marketingPlatform && (
+                          <div className="text-xs text-gray-500">
+                            {item.marketingPlatform}
+                          </div>
+                        )}
+                        {item.marketingExpenseType && (
+                          <div className="text-xs text-gray-500">
+                            {item.marketingExpenseType.replace('_', ' ')}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-400">-</div>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -531,6 +682,279 @@ export default function AdminInventoryPage() {
           </table>
         </div>
       </div>
+
+      {/* Add Item Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Inventory Item</h3>
+              <form onSubmit={handleAddItem} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Item Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Item Type *
+                    </label>
+                    <select
+                      value={newItem.itemType}
+                      onChange={(e) => setNewItem({ ...newItem, itemType: e.target.value as 'product' | 'marketing_expense' })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    >
+                      <option value="product">Product</option>
+                      <option value="marketing_expense">Marketing Expense</option>
+                    </select>
+                  </div>
+
+                  {/* Item ID */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Item ID *
+                    </label>
+                    <input
+                      type="text"
+                      value={newItem.itemId}
+                      onChange={(e) => setNewItem({ ...newItem, itemId: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., KC001"
+                      required
+                    />
+                  </div>
+
+                  {/* Brand */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Brand *
+                    </label>
+                    <input
+                      type="text"
+                      value={newItem.brand}
+                      onChange={(e) => setNewItem({ ...newItem, brand: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., Titleist"
+                      required
+                    />
+                  </div>
+
+                  {/* Model */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Model *
+                    </label>
+                    <input
+                      type="text"
+                      value={newItem.model}
+                      onChange={(e) => setNewItem({ ...newItem, model: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., TSR3"
+                      required
+                    />
+                  </div>
+
+                  {/* Club Type - only show for products */}
+                  {newItem.itemType === 'product' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Club Type *
+                      </label>
+                      <select
+                        value={newItem.clubType}
+                        onChange={(e) => setNewItem({ ...newItem, clubType: e.target.value as ProductCategory })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      >
+                        <option value="drivers">Drivers</option>
+                        <option value="irons">Irons</option>
+                        <option value="wedges">Wedges</option>
+                        <option value="putters">Putters</option>
+                        <option value="fairway-woods">Fairway Woods</option>
+                        <option value="hybrids">Hybrids</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="apparel">Apparel</option>
+                        <option value="collectibles">Collectibles</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Marketing Expense Type - only show for marketing expenses */}
+                  {newItem.itemType === 'marketing_expense' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Marketing Expense Type *
+                      </label>
+                      <select
+                        value={newItem.marketingExpenseType || ''}
+                        onChange={(e) => setNewItem({ ...newItem, marketingExpenseType: e.target.value as any })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      >
+                        <option value="online_ad">Online Advertisement</option>
+                        <option value="social_media">Social Media Campaign</option>
+                        <option value="email_campaign">Email Campaign</option>
+                        <option value="content_creation">Content Creation</option>
+                        <option value="photography">Photography</option>
+                        <option value="video_production">Video Production</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Condition - only show for products */}
+                  {newItem.itemType === 'product' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Condition *
+                      </label>
+                      <select
+                        value={newItem.condition}
+                        onChange={(e) => setNewItem({ ...newItem, condition: e.target.value as ProductCondition })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required
+                      >
+                        <option value="new">New</option>
+                        <option value="like-new">Like New</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="very-good">Very Good</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Purchase Cost */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Purchase Cost *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newItem.purchaseCost}
+                      onChange={(e) => setNewItem({ ...newItem, purchaseCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0.00"
+                      required
+                    />
+                  </div>
+
+                  {/* Marketing Spend - only show for marketing expenses */}
+                  {newItem.itemType === 'marketing_expense' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Marketing Spend *
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={newItem.marketingSpend || ''}
+                        onChange={(e) => setNewItem({ ...newItem, marketingSpend: parseFloat(e.target.value) || 0 })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="0.00"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {/* Marketing Platform - only show for marketing expenses */}
+                  {newItem.itemType === 'marketing_expense' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Marketing Platform
+                      </label>
+                      <input
+                        type="text"
+                        value={newItem.marketingPlatform || ''}
+                        onChange={(e) => setNewItem({ ...newItem, marketingPlatform: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., Facebook, Google Ads"
+                      />
+                    </div>
+                  )}
+
+                  {/* Marketing Campaign - only show for marketing expenses */}
+                  {newItem.itemType === 'marketing_expense' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Campaign Name
+                      </label>
+                      <input
+                        type="text"
+                        value={newItem.marketingCampaign || ''}
+                        onChange={(e) => setNewItem({ ...newItem, marketingCampaign: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g., Summer Sale Campaign"
+                      />
+                    </div>
+                  )}
+
+                  {/* Customization Cost */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Customization Cost
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newItem.customizationCost || ''}
+                      onChange={(e) => setNewItem({ ...newItem, customizationCost: parseFloat(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  {/* Bin Location */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Bin Location
+                    </label>
+                    <input
+                      type="text"
+                      value={newItem.binLocation || ''}
+                      onChange={(e) => setNewItem({ ...newItem, binLocation: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., A1-15"
+                    />
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Notes
+                  </label>
+                  <textarea
+                    value={newItem.notes || ''}
+                    onChange={(e) => setNewItem({ ...newItem, notes: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={3}
+                    placeholder="Additional notes..."
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setNewItem(getDefaultNewItem());
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                  >
+                    Add Item
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Import Modal */}
       {showImportModal && (

@@ -178,6 +178,13 @@ export interface InventoryItem {
   status: 'inventory' | 'sold' | 'pending';
   binLocation?: string;
   notes?: string;
+  // Marketing Expense Tracking
+  itemType: 'product' | 'marketing_expense'; // New field to distinguish between products and marketing expenses
+  marketingExpenseType?: 'online_ad' | 'social_media' | 'email_campaign' | 'content_creation' | 'photography' | 'video_production' | 'other';
+  marketingCampaign?: string; // Campaign name or description
+  marketingPlatform?: string; // Facebook, Google, Instagram, etc.
+  marketingSpend?: number; // Amount spent on marketing for this item
+  marketingROI?: number; // Return on investment for marketing spend
   createdAt: string;
   updatedAt: string;
 }
