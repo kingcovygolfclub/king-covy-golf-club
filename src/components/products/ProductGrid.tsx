@@ -36,11 +36,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       </button>
       
       <div className="relative aspect-square overflow-hidden">
-        <Image
+        <img
           src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
           alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onLoad={() => console.log('Image loaded:', product.images[0])}
           onError={(e) => console.error('Image failed to load:', product.images[0], e)}
         />
@@ -114,11 +113,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
     <div className="card group">
       <div className="flex space-x-4 p-4">
         <div className="relative w-24 h-24 flex-shrink-0">
-          <Image
+          <img
             src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
             alt={product.name}
-            fill
-            className="object-cover rounded-md"
+            className="w-full h-full object-cover rounded-md"
             onLoad={() => console.log('List image loaded:', product.images[0])}
             onError={(e) => console.error('List image failed to load:', product.images[0], e)}
           />
