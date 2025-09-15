@@ -58,7 +58,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({ onClose }) => {
             <div className="flex space-x-3">
               <div className="flex-shrink-0">
                 <Image
-                  src={item.product.images[0] || '/placeholder-golf-club.jpg'}
+                  src={item.product.images[0] || '/placeholder-golf-club.svg'}
                   alt={item.product.name}
                   width={60}
                   height={60}

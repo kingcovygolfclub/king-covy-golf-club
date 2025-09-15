@@ -247,7 +247,7 @@ class ApiService {
         stock: 3,
         featured: true,
         description: 'Classic blade putter with milled face for consistent roll',
-        images: ['/placeholder-golf-club.jpg'],
+        images: ['/placeholder-golf-club.svg'],
         specifications: {
           model: 'Newport 2',
           year: 2023,

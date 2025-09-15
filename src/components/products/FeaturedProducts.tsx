@@ -160,7 +160,7 @@ const FeaturedProducts: React.FC = () => {
         <div key={product.id} className="card group">
           <div className="relative aspect-square overflow-hidden">
             <Image
-              src={product.images[0] || '/placeholder-golf-club.jpg'}
+              src={product.images[0] || '/placeholder-golf-club.svg'}
               alt={product.name}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"

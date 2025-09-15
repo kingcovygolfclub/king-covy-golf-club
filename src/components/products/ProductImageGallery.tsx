@@ -19,7 +19,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
       {/* Main Image */}
       <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
         <Image
-          src={images[selectedIndex] || '/placeholder-golf-club.jpg'}
+          src={images[selectedIndex] || '/placeholder-golf-club.svg'}
           alt={`Product image ${selectedIndex + 1}`}
           fill
           className="object-cover"
@@ -40,7 +40,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
               }`}
             >
               <Image
-                src={image || '/placeholder-golf-club.jpg'}
+                src={image || '/placeholder-golf-club.svg'}
                 alt={`Product thumbnail ${index + 1}`}
                 fill
                 className="object-cover"

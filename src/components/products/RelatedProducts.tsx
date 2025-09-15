@@ -111,7 +111,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ currentProductId, cat
           <div key={product.id} className="group">
             <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
               <Image
-                src={product.images[0] || '/placeholder-golf-club.jpg'}
+                src={product.images[0] || '/placeholder-golf-club.svg'}
                 alt={product.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"

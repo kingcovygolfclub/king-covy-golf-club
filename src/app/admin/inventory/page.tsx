@@ -154,8 +154,8 @@ export default function AdminInventoryPage() {
           totalCost: item.totalCost || item.purchaseCost || 0,
           status: item.status || 'inventory',
           itemType: item.itemType || 'product',
-          images: item.images || ['/placeholder-golf-club.jpg'],
-          primaryImage: item.primaryImage || item.images?.[0] || '/placeholder-golf-club.jpg',
+            images: item.images || ['/placeholder-golf-club.svg'],
+            primaryImage: item.primaryImage || item.images?.[0] || '/placeholder-golf-club.svg',
           marketingExpenseType: item.marketingExpenseType,
           marketingCampaign: item.marketingCampaign,
           marketingPlatform: item.marketingPlatform,
@@ -181,8 +181,8 @@ export default function AdminInventoryPage() {
             totalCost: (product.price || 0) * 0.7,
             status: 'inventory' as const,
             itemType: 'product' as const,
-            images: product.images || ['/placeholder-golf-club.jpg'],
-            primaryImage: product.images?.[0] || '/placeholder-golf-club.jpg',
+            images: product.images || ['/placeholder-golf-club.svg'],
+            primaryImage: product.images?.[0] || '/placeholder-golf-club.svg',
             createdAt: product.createdAt || new Date().toISOString(),
             updatedAt: product.updatedAt || new Date().toISOString()
           }));
@@ -209,14 +209,14 @@ export default function AdminInventoryPage() {
       // In a real implementation, you'd upload to S3 or another service
       const imageUrls = imagePreviewUrls.length > 0 
         ? imagePreviewUrls 
-        : ['/placeholder-golf-club.jpg']; // Default placeholder
+        : ['/placeholder-golf-club.svg']; // Default placeholder
       
       // Prepare item data
       const itemData: Partial<InventoryItem> = {
         ...newItem,
         totalCost,
         images: imageUrls,
-        primaryImage: newItem.primaryImage || imageUrls[0] || '/placeholder-golf-club.jpg',
+        primaryImage: newItem.primaryImage || imageUrls[0] || '/placeholder-golf-club.svg',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -239,7 +239,7 @@ export default function AdminInventoryPage() {
             description: `High-quality ${itemData.brand} ${itemData.model} ${itemData.clubType}`,
             price: (itemData.totalCost || 0) * 1.4, // Mark up by 40% for retail price
             originalPrice: (itemData.totalCost || 0) * 1.6, // Higher original price
-            images: itemData.images || ['/placeholder-golf-club.jpg'],
+            images: itemData.images || ['/placeholder-golf-club.svg'],
             category: itemData.clubType,
             brand: itemData.brand,
             condition: itemData.condition,
@@ -778,11 +778,11 @@ export default function AdminInventoryPage() {
                       {/* Product Image */}
                       <div className="flex-shrink-0">
                         <img
-                          src={item.primaryImage || item.images?.[0] || '/placeholder-golf-club.jpg'}
+                          src={item.primaryImage || item.images?.[0] || '/placeholder-golf-club.svg'}
                           alt={`${item.brand} ${item.model}`}
                           className="w-12 h-12 object-cover rounded-lg border"
                           onError={(e) => {
-                            e.currentTarget.src = '/placeholder-golf-club.jpg';
+                            e.currentTarget.src = '/placeholder-golf-club.svg';
                           }}
                         />
                       </div>
