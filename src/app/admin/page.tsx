@@ -5,66 +5,88 @@ import Link from 'next/link';
 import { 
   Package, 
   ShoppingCart, 
-  Users, 
   DollarSign,
   TrendingUp,
   AlertTriangle,
-  Eye
+  Eye,
+  BarChart3,
+  Percent,
+  Warehouse,
+  Receipt
 } from 'lucide-react';
 import { apiService } from '@/services/api';
-
-interface DashboardStats {
-  totalProducts: number;
-  totalOrders: number;
-  totalCustomers: number;
-  totalRevenue: number;
-  lowStockProducts: number;
-  pendingOrders: number;
-}
+import { DashboardMetrics } from '@/types';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalProducts: 0,
-    totalOrders: 0,
-    totalCustomers: 0,
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
+    totalItemsLogged: 0,
+    itemsSold: 0,
+    itemsInInventory: 0,
+    inventoryCostValue: 0,
+    inventoryListedValue: 0,
     totalRevenue: 0,
-    lowStockProducts: 0,
+    totalCOGS: 0,
+    totalShipping: 0,
+    totalNetProfit: 0,
+    averageProfitMargin: 0,
+    totalOrders: 0,
     pendingOrders: 0
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDashboardStats();
+    loadDashboardMetrics();
   }, []);
 
-  const loadDashboardStats = async () => {
+  const loadDashboardMetrics = async () => {
     try {
       setLoading(true);
       
-      // Try to get real dashboard stats
-      const statsResponse = await apiService.getDashboardStats();
+      // Try to get real dashboard metrics
+      const metricsResponse = await apiService.getDashboardStats();
       
-      if (statsResponse.success && statsResponse.data) {
-        setStats(statsResponse.data);
+      if (metricsResponse.success && metricsResponse.data) {
+        // Transform existing data to new format if needed
+        const transformedMetrics: DashboardMetrics = {
+          totalItemsLogged: metricsResponse.data.totalProducts || 0,
+          itemsSold: 0, // Will be calculated from sold items
+          itemsInInventory: metricsResponse.data.totalProducts || 0,
+          inventoryCostValue: 0, // Will be calculated from inventory items
+          inventoryListedValue: 0, // Will be calculated from inventory items
+          totalRevenue: metricsResponse.data.totalRevenue || 0,
+          totalCOGS: 0, // Will be calculated from sold items
+          totalShipping: 0, // Will be calculated from orders
+          totalNetProfit: 0, // Will be calculated
+          averageProfitMargin: 0, // Will be calculated
+          totalOrders: metricsResponse.data.totalOrders || 0,
+          pendingOrders: metricsResponse.data.pendingOrders || 0
+        };
+        setMetrics(transformedMetrics);
       } else {
         // Fallback to individual API calls if dashboard endpoint fails
-        console.warn('Dashboard stats endpoint failed, using fallback:', statsResponse.error);
+        console.warn('Dashboard metrics endpoint failed, using fallback:', metricsResponse.error);
         
         const productsResponse = await apiService.getProducts({ limit: 1000 });
 
-        const fallbackStats: DashboardStats = {
-          totalProducts: productsResponse.data?.length || 0,
-          totalOrders: 0,
-          totalCustomers: 0,
+        const fallbackMetrics: DashboardMetrics = {
+          totalItemsLogged: productsResponse.data?.length || 0,
+          itemsSold: 0,
+          itemsInInventory: productsResponse.data?.length || 0,
+          inventoryCostValue: 0,
+          inventoryListedValue: 0,
           totalRevenue: 0,
-          lowStockProducts: productsResponse.data?.filter((p: any) => p.stock < 5).length || 0,
+          totalCOGS: 0,
+          totalShipping: 0,
+          totalNetProfit: 0,
+          averageProfitMargin: 0,
+          totalOrders: 0,
           pendingOrders: 0
         };
 
-        setStats(fallbackStats);
+        setMetrics(fallbackMetrics);
       }
     } catch (error) {
-      console.error('Error loading dashboard stats:', error);
+      console.error('Error loading dashboard metrics:', error);
     } finally {
       setLoading(false);
     }
@@ -79,47 +101,47 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      name: 'Total Products',
-      value: stats.totalProducts,
-      icon: Package,
-      color: 'bg-blue-500',
-      href: '/admin/products'
-    },
-    {
-      name: 'Total Orders',
-      value: stats.totalOrders,
-      icon: ShoppingCart,
+      name: 'Items Sold',
+      value: metrics.itemsSold,
+      icon: Receipt,
       color: 'bg-green-500',
-      href: '/admin/orders'
+      href: '/admin/analytics'
     },
     {
-      name: 'Total Customers',
-      value: stats.totalCustomers,
-      icon: Users,
-      color: 'bg-purple-500',
-      href: '/admin/customers'
+      name: 'Inventory Cost Value',
+      value: formatCurrency(metrics.inventoryCostValue),
+      icon: Warehouse,
+      color: 'bg-blue-500',
+      href: '/admin/inventory'
     },
     {
-      name: 'Total Revenue',
-      value: formatCurrency(stats.totalRevenue),
+      name: 'Total Net Profit',
+      value: formatCurrency(metrics.totalNetProfit),
       icon: DollarSign,
-      color: 'bg-yellow-500',
+      color: 'bg-emerald-500',
+      href: '/admin/analytics'
+    },
+    {
+      name: 'Average Profit Margin',
+      value: `${metrics.averageProfitMargin.toFixed(1)}%`,
+      icon: Percent,
+      color: 'bg-purple-500',
       href: '/admin/analytics'
     }
   ];
 
   const alertCards = [
     {
-      name: 'Low Stock Products',
-      value: stats.lowStockProducts,
-      icon: AlertTriangle,
-      color: 'bg-red-500',
-      href: '/admin/products?filter=low-stock'
+      name: 'Total Orders',
+      value: metrics.totalOrders,
+      icon: ShoppingCart,
+      color: 'bg-indigo-500',
+      href: '/admin/orders'
     },
     {
       name: 'Pending Orders',
-      value: stats.pendingOrders,
-      icon: TrendingUp,
+      value: metrics.pendingOrders,
+      icon: AlertTriangle,
       color: 'bg-orange-500',
       href: '/admin/orders?status=pending'
     }
@@ -137,9 +159,9 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to King Covy Admin</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">King Covy Inventory Dashboard</h2>
         <p className="text-gray-600">
-          Manage your golf club inventory, orders, and customers from this central dashboard.
+          Track your golf club inventory, sales performance, and profitability with real-time metrics and analytics.
         </p>
       </div>
 
@@ -189,11 +211,11 @@ export default function AdminDashboard() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
-            href="/admin/products/new"
+            href="/admin/inventory"
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Package className="h-5 w-5 text-gray-400 mr-3" />
-            <span className="font-medium text-gray-900">Add New Product</span>
+            <span className="font-medium text-gray-900">Manage Inventory</span>
           </Link>
           <Link
             href="/admin/orders"
@@ -203,11 +225,11 @@ export default function AdminDashboard() {
             <span className="font-medium text-gray-900">View Orders</span>
           </Link>
           <Link
-            href="/admin/inventory"
+            href="/admin/analytics"
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            <TrendingUp className="h-5 w-5 text-gray-400 mr-3" />
-            <span className="font-medium text-gray-900">Manage Inventory</span>
+            <BarChart3 className="h-5 w-5 text-gray-400 mr-3" />
+            <span className="font-medium text-gray-900">View Analytics</span>
           </Link>
         </div>
       </div>
@@ -218,17 +240,17 @@ export default function AdminDashboard() {
         <div className="space-y-3">
           <div className="flex items-center text-sm text-gray-600">
             <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
-            <span>System initialized - Admin dashboard ready</span>
+            <span>Inventory dashboard initialized - Ready for tracking</span>
             <span className="ml-auto text-xs text-gray-500">Just now</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
-            <span>Order management system deployed</span>
+            <span>Excel inventory tracker integration complete</span>
             <span className="ml-auto text-xs text-gray-500">1 hour ago</span>
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-            <span>Product catalog updated</span>
+            <span>Profit margin analytics enabled</span>
             <span className="ml-auto text-xs text-gray-500">2 hours ago</span>
           </div>
         </div>

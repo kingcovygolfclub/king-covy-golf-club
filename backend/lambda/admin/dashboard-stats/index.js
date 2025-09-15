@@ -7,6 +7,20 @@ const docClient = DynamoDBDocumentClient.from(client);
 exports.handler = async (event) => {
   console.log('Received event:', JSON.stringify(event, null, 2));
 
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    };
+  }
+
   try {
     const { httpMethod } = event;
     const productsTable = process.env.PRODUCTS_TABLE || 'king-covy-products';

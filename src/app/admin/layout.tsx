@@ -7,17 +7,17 @@ import {
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
-  Users, 
   BarChart3,
   Settings,
-  LogOut
+  LogOut,
+  Warehouse,
+  FileText
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Inventory', href: '/admin/inventory', icon: Warehouse },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-  { name: 'Customers', href: '/admin/customers', icon: Users },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];

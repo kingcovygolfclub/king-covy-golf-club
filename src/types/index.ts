@@ -158,3 +158,87 @@ export interface PaginatedResponse<T> extends APIResponse<T[]> {
     totalPages: number;
   };
 }
+
+// Excel Inventory Tracker Types
+export interface InventoryItem {
+  itemId: string; // Unique identifier
+  brand: string;
+  model: string;
+  clubType: ProductCategory;
+  condition: ProductCondition;
+  customization?: string;
+  purchaseCost: number;
+  customizationCost?: number;
+  totalCost: number; // Purchase + Customization
+  soldPrice?: number;
+  saleDate?: string;
+  shippingCost?: number;
+  netRevenue?: number; // Sold Price - Total Cost - Shipping
+  profitMargin?: number; // Net Revenue ÷ Total Cost
+  status: 'inventory' | 'sold' | 'pending';
+  binLocation?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Dashboard Metrics based on Excel requirements
+export interface DashboardMetrics {
+  totalItemsLogged: number;
+  itemsSold: number;
+  itemsInInventory: number;
+  inventoryCostValue: number; // Unsold items cost value
+  inventoryListedValue: number; // Unsold items listed value
+  totalRevenue: number;
+  totalCOGS: number; // Cost of Goods Sold
+  totalShipping: number;
+  totalNetProfit: number;
+  averageProfitMargin: number; // Average for sold items
+  totalOrders: number;
+  pendingOrders: number;
+}
+
+// Invoice and Pick Slip Types
+export interface InvoiceItem {
+  itemId: string;
+  brand: string;
+  model: string;
+  clubType: string;
+  condition: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  netRevenue: number;
+}
+
+export interface Invoice {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  items: InvoiceItem[];
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  date: string;
+  status: 'draft' | 'sent' | 'paid';
+}
+
+export interface PickSlipItem {
+  itemId: string;
+  brand: string;
+  model: string;
+  clubType: string;
+  binLocation?: string;
+  notes?: string;
+  quantity: number;
+}
+
+export interface PickSlip {
+  id: string;
+  orderId: string;
+  items: PickSlipItem[];
+  date: string;
+  status: 'pending' | 'picked' | 'shipped';
+  notes?: string;
+}

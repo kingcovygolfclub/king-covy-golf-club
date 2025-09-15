@@ -12,9 +12,15 @@ import {
   Clock, 
   XCircle,
   DollarSign,
-  Calendar
+  Calendar,
+  FileText,
+  ClipboardList,
+  Download,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { InvoiceItem, PickSlipItem } from '@/types';
 
 interface Order {
   id: string;
@@ -45,6 +51,11 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showPickSlipModal, setShowPickSlipModal] = useState(false);
+  const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
+  const [pickSlipItems, setPickSlipItems] = useState<PickSlipItem[]>([]);
 
   useEffect(() => {
     loadOrders();
@@ -118,6 +129,147 @@ export default function OrdersPage() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const generateInvoice = (order: Order) => {
+    setSelectedOrder(order);
+    // Transform order items to invoice items
+    const items: InvoiceItem[] = order.items.map(item => ({
+      itemId: item.productId,
+      brand: 'Unknown', // Would be fetched from inventory
+      model: item.productName,
+      clubType: 'Unknown', // Would be fetched from inventory
+      condition: 'Unknown', // Would be fetched from inventory
+      quantity: item.quantity,
+      unitPrice: item.price,
+      totalPrice: item.price * item.quantity,
+      netRevenue: item.price * item.quantity * 0.3 // Estimate 30% margin
+    }));
+    setInvoiceItems(items);
+    setShowInvoiceModal(true);
+  };
+
+  const generatePickSlip = (order: Order) => {
+    setSelectedOrder(order);
+    // Transform order items to pick slip items
+    const items: PickSlipItem[] = order.items.map(item => ({
+      itemId: item.productId,
+      brand: 'Unknown', // Would be fetched from inventory
+      model: item.productName,
+      clubType: 'Unknown', // Would be fetched from inventory
+      binLocation: 'A1-B2', // Would be fetched from inventory
+      notes: '',
+      quantity: item.quantity
+    }));
+    setPickSlipItems(items);
+    setShowPickSlipModal(true);
+  };
+
+  const addInvoiceItem = () => {
+    const newItem: InvoiceItem = {
+      itemId: '',
+      brand: '',
+      model: '',
+      clubType: 'drivers',
+      condition: 'new',
+      quantity: 1,
+      unitPrice: 0,
+      totalPrice: 0,
+      netRevenue: 0
+    };
+    setInvoiceItems([...invoiceItems, newItem]);
+  };
+
+  const addPickSlipItem = () => {
+    const newItem: PickSlipItem = {
+      itemId: '',
+      brand: '',
+      model: '',
+      clubType: 'drivers',
+      binLocation: '',
+      notes: '',
+      quantity: 1
+    };
+    setPickSlipItems([...pickSlipItems, newItem]);
+  };
+
+  const updateInvoiceItem = (index: number, field: keyof InvoiceItem, value: any) => {
+    const updatedItems = [...invoiceItems];
+    updatedItems[index] = { ...updatedItems[index], [field]: value };
+    
+    // Auto-calculate total price and net revenue
+    if (field === 'quantity' || field === 'unitPrice') {
+      const item = updatedItems[index];
+      item.totalPrice = item.quantity * item.unitPrice;
+      item.netRevenue = item.totalPrice * 0.3; // 30% margin estimate
+    }
+    
+    setInvoiceItems(updatedItems);
+  };
+
+  const updatePickSlipItem = (index: number, field: keyof PickSlipItem, value: any) => {
+    const updatedItems = [...pickSlipItems];
+    updatedItems[index] = { ...updatedItems[index], [field]: value };
+    setPickSlipItems(updatedItems);
+  };
+
+  const removeInvoiceItem = (index: number) => {
+    setInvoiceItems(invoiceItems.filter((_, i) => i !== index));
+  };
+
+  const removePickSlipItem = (index: number) => {
+    setPickSlipItems(pickSlipItems.filter((_, i) => i !== index));
+  };
+
+  const saveInvoice = async () => {
+    try {
+      const invoiceData = {
+        orderId: selectedOrder?.id,
+        customerName: selectedOrder?.customerName,
+        customerEmail: selectedOrder?.customerEmail,
+        items: invoiceItems,
+        subtotal: invoiceItems.reduce((sum, item) => sum + item.totalPrice, 0),
+        tax: 0,
+        shipping: 0,
+        total: invoiceItems.reduce((sum, item) => sum + item.totalPrice, 0),
+        date: new Date().toISOString(),
+        status: 'draft'
+      };
+
+      const response = await apiService.createInvoice(invoiceData);
+      if (response.success) {
+        alert('Invoice created successfully!');
+        setShowInvoiceModal(false);
+      } else {
+        alert('Failed to create invoice: ' + response.error);
+      }
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+      alert('Error creating invoice. Please try again.');
+    }
+  };
+
+  const savePickSlip = async () => {
+    try {
+      const pickSlipData = {
+        orderId: selectedOrder?.id,
+        items: pickSlipItems,
+        date: new Date().toISOString(),
+        status: 'pending',
+        notes: ''
+      };
+
+      const response = await apiService.createPickSlip(pickSlipData);
+      if (response.success) {
+        alert('Pick slip created successfully!');
+        setShowPickSlipModal(false);
+      } else {
+        alert('Failed to create pick slip: ' + response.error);
+      }
+    } catch (error) {
+      console.error('Error creating pick slip:', error);
+      alert('Error creating pick slip. Please try again.');
+    }
   };
 
   if (loading) {
@@ -305,10 +457,24 @@ export default function OrdersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <button className="text-primary-600 hover:text-primary-900">
+                          <button 
+                            onClick={() => generateInvoice(order)}
+                            className="text-green-600 hover:text-green-900"
+                            title="Generate Invoice"
+                          >
+                            <FileText className="h-4 w-4" />
+                          </button>
+                          <button 
+                            onClick={() => generatePickSlip(order)}
+                            className="text-blue-600 hover:text-blue-900"
+                            title="Generate Pick Slip"
+                          >
+                            <ClipboardList className="h-4 w-4" />
+                          </button>
+                          <button className="text-primary-600 hover:text-primary-900" title="View Details">
                             <Eye className="h-4 w-4" />
                           </button>
-                          <button className="text-primary-600 hover:text-primary-900">
+                          <button className="text-primary-600 hover:text-primary-900" title="Edit Order">
                             <Edit className="h-4 w-4" />
                           </button>
                         </div>
@@ -321,6 +487,279 @@ export default function OrdersPage() {
           )}
         </div>
       </div>
+
+      {/* Invoice Modal */}
+      {showInvoiceModal && selectedOrder && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-6xl shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-medium text-gray-900">Generate Invoice</h3>
+                <button
+                  onClick={() => setShowInvoiceModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XCircle className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-medium text-gray-900">Order Details</h4>
+                <p className="text-sm text-gray-600">Order ID: {selectedOrder.id}</p>
+                <p className="text-sm text-gray-600">Customer: {selectedOrder.customerName} ({selectedOrder.customerEmail})</p>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium text-gray-900">Invoice Items</h4>
+                  <button
+                    onClick={addInvoiceItem}
+                    className="btn-primary flex items-center"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Item
+                  </button>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item ID</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unit Price</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Net Revenue</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {invoiceItems.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.itemId}
+                              onChange={(e) => updateInvoiceItem(index, 'itemId', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.brand}
+                              onChange={(e) => updateInvoiceItem(index, 'brand', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.model}
+                              onChange={(e) => updateInvoiceItem(index, 'model', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updateInvoiceItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                              className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.unitPrice}
+                              onChange={(e) => updateInvoiceItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                              className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2 text-sm">
+                            {formatCurrency(item.totalPrice)}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-green-600">
+                            {formatCurrency(item.netRevenue)}
+                          </td>
+                          <td className="px-4 py-2">
+                            <button
+                              onClick={() => removeInvoiceItem(index)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-gray-600">Total: {formatCurrency(invoiceItems.reduce((sum, item) => sum + item.totalPrice, 0))}</p>
+                  <p className="text-sm text-green-600">Net Profit: {formatCurrency(invoiceItems.reduce((sum, item) => sum + item.netRevenue, 0))}</p>
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowInvoiceModal(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveInvoice}
+                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                  >
+                    Save Invoice
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pick Slip Modal */}
+      {showPickSlipModal && selectedOrder && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-medium text-gray-900">Generate Pick Slip</h3>
+                <button
+                  onClick={() => setShowPickSlipModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <XCircle className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-medium text-gray-900">Order Details</h4>
+                <p className="text-sm text-gray-600">Order ID: {selectedOrder.id}</p>
+                <p className="text-sm text-gray-600">Customer: {selectedOrder.customerName}</p>
+              </div>
+
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium text-gray-900">Pick Items</h4>
+                  <button
+                    onClick={addPickSlipItem}
+                    className="btn-primary flex items-center"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Item
+                  </button>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item ID</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Brand</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Model</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Bin Location</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {pickSlipItems.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.itemId}
+                              onChange={(e) => updatePickSlipItem(index, 'itemId', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.brand}
+                              onChange={(e) => updatePickSlipItem(index, 'brand', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.model}
+                              onChange={(e) => updatePickSlipItem(index, 'model', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updatePickSlipItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                              className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.binLocation || ''}
+                              onChange={(e) => updatePickSlipItem(index, 'binLocation', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                              placeholder="A1-B2"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <input
+                              type="text"
+                              value={item.notes || ''}
+                              onChange={(e) => updatePickSlipItem(index, 'notes', e.target.value)}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                              placeholder="Special notes"
+                            />
+                          </td>
+                          <td className="px-4 py-2">
+                            <button
+                              onClick={() => removePickSlipItem(index)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowPickSlipModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={savePickSlip}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                >
+                  Save Pick Slip
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

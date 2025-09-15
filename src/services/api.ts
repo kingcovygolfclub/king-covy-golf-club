@@ -159,6 +159,80 @@ class ApiService {
     return this.makeRequest<any[]>(`/customers${queryParams}`);
   }
 
+  // Inventory management endpoints
+  async getInventoryItems(filters: { status?: string; clubType?: string; limit?: number } = {}): Promise<ApiResponse<any[]>> {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, String(value));
+      }
+    });
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/admin/inventory?${queryString}` : '/admin/inventory';
+    
+    return this.makeRequest<any[]>(endpoint);
+  }
+
+  async createInventoryItem(itemData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/inventory', {
+      method: 'POST',
+      body: JSON.stringify(itemData)
+    });
+  }
+
+  async updateInventoryItem(itemId: string, itemData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>(`/admin/inventory/${itemId}`, {
+      method: 'PUT',
+      body: JSON.stringify(itemData)
+    });
+  }
+
+  async deleteInventoryItem(itemId: string): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>(`/admin/inventory/${itemId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  // Invoice and Pick Slip endpoints
+  async createInvoice(invoiceData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/invoices', {
+      method: 'POST',
+      body: JSON.stringify(invoiceData)
+    });
+  }
+
+  async createPickSlip(pickSlipData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/pick-slips', {
+      method: 'POST',
+      body: JSON.stringify(pickSlipData)
+    });
+  }
+
+  async getInvoices(filters: { status?: string; limit?: number } = {}): Promise<ApiResponse<any[]>> {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, String(value));
+      }
+    });
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/admin/invoices?${queryString}` : '/admin/invoices';
+    
+    return this.makeRequest<any[]>(endpoint);
+  }
+
+  // Excel import endpoint
+  async importInventoryCSV(csvData: string): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/inventory/import', {
+      method: 'POST',
+      body: JSON.stringify({ csvData })
+    });
+  }
+
   // Mock data fallback for development
   getMockProducts() {
     return [
