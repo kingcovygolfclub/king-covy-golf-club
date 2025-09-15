@@ -11,9 +11,24 @@ const INVENTORY_TABLE = process.env.INVENTORY_TABLE || 'king-covy-inventory';
 exports.handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
 
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    };
+  }
+
   try {
     const body = JSON.parse(event.body || '{}');
     const {
+      id,
       name,
       description,
       price,
@@ -44,8 +59,8 @@ exports.handler = async (event) => {
       };
     }
 
-    // Generate product ID
-    const productId = `prod_${uuidv4()}`;
+    // Use provided ID or generate one
+    const productId = id || `prod_${uuidv4()}`;
     const timestamp = new Date().toISOString();
 
     // Create product object

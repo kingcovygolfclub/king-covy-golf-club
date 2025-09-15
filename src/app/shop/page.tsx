@@ -9,12 +9,12 @@ import ProductGrid from '@/components/products/ProductGrid';
 // Mock products data
 const mockProducts = [
   {
-    id: '1',
+    id: 'scotty-cameron-newport-2',
     name: 'Scotty Cameron Newport 2',
     description: 'Classic blade putter with milled face for consistent roll',
     price: 399.99,
     originalPrice: 449.99,
-    images: ['/placeholder-golf-club.svg'],
+    images: ['https://d1xso6am1gh0.cloudfront.net/products/putters/scotty-cameron-newport-2.svg'],
     category: 'putters' as const,
     brand: 'Scotty Cameron',
     condition: 'excellent' as const,
@@ -55,11 +55,11 @@ const mockProducts = [
     tags: ['putter', 'scotty-cameron', 'blade', 'milled', 'premium']
   },
   {
-    id: '2',
+    id: 'titleist-tsr3-driver',
     name: 'Titleist TSR3 Driver',
     description: 'Advanced driver with adjustable CG for maximum distance',
     price: 599.99,
-    images: ['/placeholder-golf-club.svg'],
+    images: ['https://d1xso6am1gh0.cloudfront.net/products/drivers/titleist-tsr3-driver.svg'],
     category: 'drivers' as const,
     brand: 'Titleist',
     condition: 'new' as const,
@@ -103,11 +103,11 @@ const mockProducts = [
     tags: ['driver', 'titleist', 'tsr3', 'adjustable', 'distance']
   },
   {
-    id: '3',
+    id: 'mizuno-mp20-irons',
     name: 'Mizuno MP-20 Irons',
     description: 'Forged muscle back irons for skilled players',
     price: 1299.99,
-    images: ['/placeholder-golf-club.svg'],
+    images: ['https://d1xso6am1gh0.cloudfront.net/products/irons/mizuno-mp20-irons.svg'],
     category: 'irons' as const,
     brand: 'Mizuno',
     condition: 'like-new' as const,

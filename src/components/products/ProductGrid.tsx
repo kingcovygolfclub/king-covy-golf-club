@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/types';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface ProductGridProps {
   products: Product[];
@@ -35,8 +35,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       </button>
       
       <div className="relative aspect-square overflow-hidden">
-        <Image
-          src={product.images[0] || '/placeholder-golf-club.svg'}
+        <OptimizedImage
+          src={product.images[0] || 'https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'}
           alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -111,8 +111,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
     <div className="card group">
       <div className="flex space-x-4 p-4">
         <div className="relative w-24 h-24 flex-shrink-0">
-          <Image
-            src={product.images[0] || '/placeholder-golf-club.svg'}
+          <OptimizedImage
+            src={product.images[0] || 'https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'}
             alt={product.name}
             fill
             className="object-cover rounded-md"

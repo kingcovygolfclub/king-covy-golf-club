@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   Warehouse,
-  FileText
+  FileText,
+  Image
 } from 'lucide-react';
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Inventory', href: '/admin/inventory', icon: Warehouse },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Customers', href: '/admin/customers', icon: Users },
+  { name: 'Images', href: '/admin/images', icon: Image },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
