@@ -104,7 +104,7 @@ exports.handler = async (event) => {
         quantity: item.quantity,
         total: itemTotal,
         customizations: item.customizations || {},
-        image: product.images?.[0] || '/placeholder-golf-club.jpg'
+        image: product.images?.[0] || 'https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'
       });
 
       // Prepare inventory update

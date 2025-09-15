@@ -72,7 +72,7 @@ exports.handler = async (event) => {
       category: category.trim(),
       brand: brand.trim(),
       specifications: specifications || {},
-      images: images || ['/placeholder-golf-club.jpg'],
+             images: images || ['https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'],
       stock: parseInt(stock) || 0,
       featured: featured === true || featured === 'true',
       condition: condition || 'new',
