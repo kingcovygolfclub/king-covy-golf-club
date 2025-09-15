@@ -15,8 +15,7 @@ interface ProductGridProps {
 const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   const { addItem } = useCart();
   
-  // FORCE DEPLOYMENT UPDATE - DRAMATIC CHANGE
-  console.log('🚨 DEPLOYMENT TEST: ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
+  // console.log('ProductGrid rendered with viewMode:', viewMode, 'products:', products.length);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -43,8 +42,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           zIndex: 999,
-          border: '5px solid lime',
-          backgroundColor: 'yellow'
+          border: '2px solid red',
+          backgroundColor: 'transparent'
         }}
       >
         {product.originalPrice && (
@@ -203,26 +202,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
   }
 
   return (
-    <div>
-      {/* DEPLOYMENT TEST BANNER */}
-      <div style={{
-        backgroundColor: 'red',
-        color: 'white',
-        padding: '20px',
-        textAlign: 'center',
-        fontSize: '24px',
-        fontWeight: 'bold',
-        marginBottom: '20px',
-        border: '5px solid yellow'
-      }}>
-        🚨 DEPLOYMENT TEST - IF YOU SEE THIS, DEPLOYMENT IS WORKING! 🚨
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
     </div>
   );
 };
