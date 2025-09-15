@@ -8,7 +8,7 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: out
+    baseDirectory: .next
     files:
       - '**/*'
   cache:
@@ -20,22 +20,3 @@ frontend:
       headers:
         - key: Cache-Control
           value: public,max-age=0,must-revalidate
-  redirects:
-    - source: '/admin/<*>'
-      target: '/admin/index.html'
-      status: 200
-    - source: '/admin'
-      target: '/admin/index.html'
-      status: 200
-    - source: '/shipping'
-      target: '/shipping/'
-      status: 301
-    - source: '/returns'
-      target: '/returns/'
-      status: 301
-    - source: '/warranty'
-      target: '/warranty/'
-      status: 301
-    - source: '/custom'
-      target: '/custom/'
-      status: 301
