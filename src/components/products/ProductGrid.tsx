@@ -37,7 +37,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       <div 
         className="relative w-full h-64 overflow-hidden group-hover:scale-105 transition-transform duration-300"
         style={{
-          backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}?v=${Date.now()})`,
+          backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}?v=${Date.now()}&cache=${Math.random()})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -45,6 +45,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
           border: '2px solid red',
           backgroundColor: 'transparent'
         }}
+        title={`DEBUG: Image URL: ${product.images[0] || 'placeholder'}`}
       >
         {product.originalPrice && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">
