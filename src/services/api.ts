@@ -132,6 +132,33 @@ class ApiService {
     });
   }
 
+  // Dashboard stats
+  async getDashboardStats(): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/admin/dashboard-stats');
+  }
+
+  // Order management for admin
+  async getOrders(filters: { status?: string; customerId?: string; limit?: number } = {}): Promise<ApiResponse<any[]>> {
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParams.append(key, String(value));
+      }
+    });
+
+    const queryString = queryParams.toString();
+    const endpoint = queryString ? `/orders?${queryString}` : '/orders';
+    
+    return this.makeRequest<any[]>(endpoint);
+  }
+
+  // Customer management for admin
+  async getCustomers(limit?: number): Promise<ApiResponse<any[]>> {
+    const queryParams = limit ? `?limit=${limit}` : '';
+    return this.makeRequest<any[]>(`/customers${queryParams}`);
+  }
+
   // Mock data fallback for development
   getMockProducts() {
     return [

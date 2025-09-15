@@ -40,21 +40,29 @@ export default function AdminDashboard() {
   const loadDashboardStats = async () => {
     try {
       setLoading(true);
-      // In a real implementation, you'd have a dedicated dashboard API endpoint
-      // For now, we'll simulate with existing endpoints
-      const productsResponse = await apiService.getProducts({ limit: 1000 });
-      // Note: We'd need to implement getOrders endpoint for this
+      
+      // Try to get real dashboard stats
+      const statsResponse = await apiService.getDashboardStats();
+      
+      if (statsResponse.success && statsResponse.data) {
+        setStats(statsResponse.data);
+      } else {
+        // Fallback to individual API calls if dashboard endpoint fails
+        console.warn('Dashboard stats endpoint failed, using fallback:', statsResponse.error);
+        
+        const productsResponse = await apiService.getProducts({ limit: 1000 });
 
-      const mockStats: DashboardStats = {
-        totalProducts: productsResponse.data?.length || 0,
-        totalOrders: 0, // Would come from orders API
-        totalCustomers: 0, // Would come from customers API
-        totalRevenue: 0, // Would be calculated from orders
-        lowStockProducts: productsResponse.data?.filter(p => p.stock < 5).length || 0,
-        pendingOrders: 0 // Would come from orders API
-      };
+        const fallbackStats: DashboardStats = {
+          totalProducts: productsResponse.data?.length || 0,
+          totalOrders: 0,
+          totalCustomers: 0,
+          totalRevenue: 0,
+          lowStockProducts: productsResponse.data?.filter((p: any) => p.stock < 5).length || 0,
+          pendingOrders: 0
+        };
 
-      setStats(mockStats);
+        setStats(fallbackStats);
+      }
     } catch (error) {
       console.error('Error loading dashboard stats:', error);
     } finally {
