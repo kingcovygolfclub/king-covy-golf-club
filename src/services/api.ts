@@ -247,7 +247,7 @@ class ApiService {
         stock: 3,
         featured: true,
         description: 'Classic blade putter with milled face for consistent roll',
-        images: ['https://d1xso6am1gh0.cloudfront.net/products/putters/scotty-cameron-newport-2.svg'],
+        images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
         specifications: {
           model: 'Newport 2',
           year: 2023,

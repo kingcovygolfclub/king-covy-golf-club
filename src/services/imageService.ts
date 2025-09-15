@@ -22,7 +22,7 @@ export interface ImageMetadata {
 
 class ImageService {
   private readonly BUCKET_NAME = 'king-covy-assets';
-  private readonly CDN_DOMAIN = 'https://d1xso6am1gh0.cloudfront.net'; // Update with your CloudFront domain
+  private readonly CDN_DOMAIN = 'https://king-covy-assets.s3.amazonaws.com'; // Direct S3 URLs
   private readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   private readonly ALLOWED_FORMATS = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 

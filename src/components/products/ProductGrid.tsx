@@ -36,7 +36,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       
       <div className="relative aspect-square overflow-hidden">
         <OptimizedImage
-          src={product.images[0] || 'https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'}
+          src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
           alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -112,7 +112,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       <div className="flex space-x-4 p-4">
         <div className="relative w-24 h-24 flex-shrink-0">
           <OptimizedImage
-            src={product.images[0] || 'https://d1xso6am1gh0.cloudfront.net/products/placeholder-golf-club.svg'}
+            src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
             alt={product.name}
             fill
             className="object-cover rounded-md"

@@ -7,7 +7,7 @@ const categories = [
     name: 'Drivers',
     slug: 'drivers',
     description: 'Premium drivers from top manufacturers for maximum distance and accuracy',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/drivers.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/drivers.svg',
     count: '24 products',
     brands: ['Titleist', 'Callaway', 'TaylorMade', 'Ping']
   },
@@ -15,7 +15,7 @@ const categories = [
     name: 'Irons',
     slug: 'irons',
     description: 'Professional-grade iron sets for precision and control',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/irons.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/irons.svg',
     count: '18 products',
     brands: ['Mizuno', 'Titleist', 'Callaway', 'TaylorMade']
   },
@@ -23,7 +23,7 @@ const categories = [
     name: 'Putters',
     slug: 'putters',
     description: 'Premium putters including collectible and custom models',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/putters.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/putters.svg',
     count: '32 products',
     brands: ['Scotty Cameron', 'Odyssey', 'Ping', 'Bettinardi']
   },
@@ -31,7 +31,7 @@ const categories = [
     name: 'Wedges',
     slug: 'wedges',
     description: 'Specialized wedges for short game mastery',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/wedges.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/wedges.svg',
     count: '15 products',
     brands: ['Titleist', 'Callaway', 'Cleveland', 'TaylorMade']
   },
@@ -39,7 +39,7 @@ const categories = [
     name: 'Fairway Woods',
     slug: 'fairway-woods',
     description: 'Versatile fairway woods for all course conditions',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/fairway-woods.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/fairway-woods.svg',
     count: '12 products',
     brands: ['Titleist', 'Callaway', 'TaylorMade', 'Ping']
   },
@@ -47,7 +47,7 @@ const categories = [
     name: 'Hybrids',
     slug: 'hybrids',
     description: 'Easy-to-hit hybrids for improved accuracy',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/hybrids.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/hybrids.svg',
     count: '8 products',
     brands: ['Titleist', 'Callaway', 'TaylorMade', 'Ping']
   },
@@ -55,7 +55,7 @@ const categories = [
     name: 'Accessories',
     slug: 'accessories',
     description: 'Essential golf accessories and equipment',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/accessories.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/accessories.svg',
     count: '45 products',
     brands: ['Various']
   },
@@ -63,7 +63,7 @@ const categories = [
     name: 'Collectibles',
     slug: 'collectibles',
     description: 'Rare and vintage golf equipment for collectors',
-    image: 'https://d1xso6am1gh0.cloudfront.net/categories/collectibles.svg',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.svg',
     count: '28 products',
     brands: ['Various Vintage']
   }
