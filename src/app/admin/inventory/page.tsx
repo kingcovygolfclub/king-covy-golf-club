@@ -84,24 +84,45 @@ export default function AdminInventoryPage() {
       setLoading(true);
       const response = await apiService.getInventoryItems({ limit: 1000 });
       if (response.success && response.data) {
-        setInventoryItems(response.data);
+        // Normalize the data structure to ensure all items have consistent properties
+        const normalizedItems: InventoryItem[] = response.data.map((item: any) => ({
+          itemId: item.itemId || item.productId || item.id || '',
+          brand: item.brand || '',
+          model: item.model || '',
+          clubType: item.clubType || item.category || 'accessories',
+          condition: item.condition || 'new',
+          purchaseCost: item.purchaseCost || 0,
+          customizationCost: item.customizationCost || 0,
+          totalCost: item.totalCost || item.purchaseCost || 0,
+          status: item.status || 'inventory',
+          itemType: item.itemType || 'product',
+          marketingExpenseType: item.marketingExpenseType,
+          marketingCampaign: item.marketingCampaign,
+          marketingPlatform: item.marketingPlatform,
+          marketingSpend: item.marketingSpend,
+          binLocation: item.binLocation,
+          notes: item.notes,
+          createdAt: item.createdAt || new Date().toISOString(),
+          updatedAt: item.updatedAt || new Date().toISOString()
+        }));
+        setInventoryItems(normalizedItems);
       } else {
         // Fallback to products for now
         const productsResponse = await apiService.getProducts({ limit: 1000 });
         if (productsResponse.success && productsResponse.data) {
           // Transform products to inventory items
           const transformedItems: InventoryItem[] = productsResponse.data.map((product: any) => ({
-            itemId: product.id,
-            brand: product.brand,
-            model: product.specifications?.model || product.name,
-            clubType: product.category,
-            condition: product.condition,
-            purchaseCost: product.price * 0.7, // Estimate purchase cost
-            totalCost: product.price * 0.7,
+            itemId: product.id || '',
+            brand: product.brand || '',
+            model: product.specifications?.model || product.name || '',
+            clubType: product.category || 'accessories',
+            condition: product.condition || 'new',
+            purchaseCost: (product.price || 0) * 0.7, // Estimate purchase cost
+            totalCost: (product.price || 0) * 0.7,
             status: 'inventory' as const,
             itemType: 'product' as const,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt
+            createdAt: product.createdAt || new Date().toISOString(),
+            updatedAt: product.updatedAt || new Date().toISOString()
           }));
           setInventoryItems(transformedItems);
         }
@@ -158,9 +179,9 @@ export default function AdminInventoryPage() {
 
   const filteredItems = inventoryItems.filter(item => {
     const matchesSearch = 
-      item.itemId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.model.toLowerCase().includes(searchTerm.toLowerCase());
+      (item.itemId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.brand || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.model || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = filters.status === 'all' || item.status === filters.status;
     const matchesClubType = filters.clubType === 'all' || item.clubType === filters.clubType;
