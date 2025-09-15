@@ -36,16 +36,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       
       <div 
         className="relative w-full h-64 overflow-hidden group-hover:scale-105 transition-transform duration-300"
-        style={{
-          backgroundImage: `url(${product.images[0] || 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Golf+Club'}?v=${Date.now()}&cache=${Math.random()}&force=${Math.random()})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: 999,
-          border: '2px solid red',
-          backgroundColor: 'transparent'
-        }}
-        title={`DEBUG: Image URL: ${product.images[0] || 'placeholder'}`}
+             style={{
+               backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg'})`,
+               backgroundSize: 'cover',
+               backgroundPosition: 'center',
+               backgroundRepeat: 'no-repeat'
+             }}
       >
         {product.originalPrice && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded text-sm font-semibold">

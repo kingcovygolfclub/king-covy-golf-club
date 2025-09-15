@@ -170,7 +170,7 @@ export default function NewProductPage() {
       const productData = {
         ...formData,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-        images: ['https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'], // Default placeholder image
+        images: ['https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg'], // Default placeholder image
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         status: 'active'

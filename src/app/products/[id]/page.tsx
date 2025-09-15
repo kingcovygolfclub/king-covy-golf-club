@@ -14,12 +14,12 @@ const mockProduct = {
   description: 'The Scotty Cameron Newport 2 is a classic blade putter that has been trusted by professionals for decades. This premium putter features a milled face for consistent roll and exceptional feel. The Newport 2\'s timeless design and superior craftsmanship make it a favorite among golfers who demand the best.',
   price: 399.99,
   originalPrice: 449.99,
-  images: [
-    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
-    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
-    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg',
-    'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'
-  ],
+       images: [
+         'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg',
+         'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg',
+         'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg',
+         'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg'
+       ],
   category: 'putters' as const,
   brand: 'Scotty Cameron',
   condition: 'excellent' as const,

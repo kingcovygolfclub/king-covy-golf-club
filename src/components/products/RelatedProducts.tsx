@@ -22,7 +22,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ currentProductId, cat
       name: 'Scotty Cameron Newport 2.5',
       description: 'Slightly larger blade putter with enhanced stability',
       price: 429.99,
-      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
+      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.jpg'],
       category: 'putters' as const,
       brand: 'Scotty Cameron',
       condition: 'excellent' as const,
@@ -45,7 +45,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ currentProductId, cat
       name: 'Scotty Cameron Phantom X 5',
       description: 'Modern mallet putter with advanced alignment features',
       price: 399.99,
-      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
+      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.jpg'],
       category: 'putters' as const,
       brand: 'Scotty Cameron',
       condition: 'like-new' as const,
@@ -68,7 +68,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ currentProductId, cat
       name: 'Odyssey White Hot OG #7',
       description: 'Classic mallet putter with legendary White Hot insert',
       price: 249.99,
-      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
+      images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.jpg'],
       category: 'putters' as const,
       brand: 'Odyssey',
       condition: 'very-good' as const,
@@ -111,7 +111,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ currentProductId, cat
           <div key={product.id} className="group">
             <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
               <Image
-                src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
+                src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg'}
                 alt={product.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"

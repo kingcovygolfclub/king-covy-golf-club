@@ -104,7 +104,7 @@ exports.handler = async (event) => {
         quantity: item.quantity,
         total: itemTotal,
         customizations: item.customizations || {},
-        image: product.images?.[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'
+        image: product.images?.[0] || 'https://king-covy-assets.s3.amazonaws.com/products/drivers/generic-driver.jpg'
       });
 
       // Prepare inventory update
