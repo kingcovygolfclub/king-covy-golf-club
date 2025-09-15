@@ -111,7 +111,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
     <div className="card group">
       <div className="flex space-x-4 p-4">
         <div className="relative w-24 h-24 flex-shrink-0">
-          <OptimizedImage
+          <Image
             src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
             alt={product.name}
             fill
