@@ -35,14 +35,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       </button>
       
       <div 
-        className="relative w-full h-64 overflow-hidden bg-cover bg-center bg-no-repeat group-hover:scale-105 transition-transform duration-300"
+        className="relative w-full h-64 overflow-hidden group-hover:scale-105 transition-transform duration-300"
         style={{
           backgroundImage: `url(${product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}?v=${Date.now()})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           zIndex: 999,
-          border: '2px solid blue'
+          border: '3px solid red',
+          backgroundColor: 'transparent'
         }}
       >
         {product.originalPrice && (
