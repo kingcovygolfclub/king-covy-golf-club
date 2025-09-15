@@ -42,8 +42,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           zIndex: 999,
-          border: '3px solid red',
-          backgroundColor: 'transparent'
+          border: '5px solid lime',
+          backgroundColor: 'yellow'
         }}
       >
         {product.originalPrice && (
