@@ -44,7 +44,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   // Generate optimized URL if it's from our CDN
   const getOptimizedSrc = () => {
-    // Check if it's from our CDN
+    // Check if it's from our S3 bucket
+    if (src.includes('king-covy-assets.s3.amazonaws.com')) {
+      // For now, just return the S3 URL directly since we don't have CloudFront set up
+      // In the future, we can add optimization here
+      return src;
+    }
+    // Check if it's from our CDN (if we set up CloudFront later)
     if (src.includes('d1xso6am1gh0.cloudfront.net')) {
       const key = src.split('d1xso6am1gh0.cloudfront.net/')[1];
       if (key) {

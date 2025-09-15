@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/types';
-import OptimizedImage from '@/components/common/OptimizedImage';
+import Image from 'next/image';
 
 interface ProductGridProps {
   products: Product[];
@@ -35,7 +35,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode }) => {
       </button>
       
       <div className="relative aspect-square overflow-hidden">
-        <OptimizedImage
+        <Image
           src={product.images[0] || 'https://king-covy-assets.s3.amazonaws.com/products/placeholder-golf-club.svg'}
           alt={product.name}
           fill
