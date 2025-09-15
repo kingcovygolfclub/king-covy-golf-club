@@ -105,16 +105,12 @@ export default function CategoriesPage() {
               >
                 {/* Category Image */}
                 <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-20 h-20 bg-primary-600 rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-white text-xl font-bold">
-                          {category.name.split(' ').map(word => word[0]).join('')}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 text-sm font-medium">{category.name}</p>
-                    </div>
-                  </div>
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                   {/* Overlay on hover */}
                   <div className="absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
                 </div>
@@ -178,18 +174,32 @@ export default function CategoriesPage() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
             {[
-              'Titleist', 'Callaway', 'TaylorMade', 'Ping', 'Mizuno', 'Scotty Cameron',
-              'Odyssey', 'Cleveland', 'Bettinardi', 'Cobra', 'Wilson', 'Srixon'
+              { name: 'Titleist', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/titleist-logo.svg' },
+              { name: 'Callaway', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/callaway-logo.svg' },
+              { name: 'TaylorMade', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/taylormade-logo.svg' },
+              { name: 'Ping', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/ping-logo.svg' },
+              { name: 'Mizuno', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/mizuno-logo.svg' },
+              { name: 'Scotty Cameron', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/scotty-cameron-logo.svg' },
+              { name: 'Odyssey', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/odyssey-logo.svg' },
+              { name: 'Cleveland', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/cleveland-logo.svg' },
+              { name: 'Bettinardi', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/bettinardi-logo.svg' },
+              { name: 'Cobra', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/cobra-logo.svg' },
+              { name: 'Wilson', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/wilson-logo.svg' },
+              { name: 'Srixon', logo: 'https://king-covy-assets.s3.amazonaws.com/brands/srixon-logo.svg' }
             ].map((brand) => (
-              <div key={brand} className="text-center group">
+              <div key={brand.name} className="text-center group">
                 <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-primary-200 transition-colors">
-                    <span className="text-primary-600 font-bold text-sm">
-                      {brand.split(' ').map(word => word[0]).join('')}
-                    </span>
+                  <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                    <Image
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      width={64}
+                      height={64}
+                      className="object-contain group-hover:scale-110 transition-transform duration-200"
+                    />
                   </div>
                   <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                    {brand}
+                    {brand.name}
                   </p>
                 </div>
               </div>
