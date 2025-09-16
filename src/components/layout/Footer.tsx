@@ -2,36 +2,30 @@ import React from 'react';
 import Link from 'next/link';
 import NoPrefetchLink from '@/components/ui/NoPrefetchLink';
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import Logo from '@/components/ui/Logo';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-secondary-900 text-white">
+    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center">
-              <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">K</span>
-              </div>
-              <span className="ml-2 text-xl font-bold">
-                King Covy Golf Club
-              </span>
-            </div>
+            <Logo size="lg" showText={true} className="text-white" />
             <p className="text-gray-300 text-sm">
               Premium boutique and collector's golf clubs, putters, accessories, 
               and golf-related merchandise with customizations.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="#" className="text-gray-400 hover:text-magenta-400 transition-all duration-300 hover:scale-110">
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
@@ -42,22 +36,22 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <NoPrefetchLink href="/shop" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/shop" className="text-gray-300 hover:text-cyan-400 transition-colors duration-300">
                   Shop All Products
                 </NoPrefetchLink>
               </li>
               <li>
-                <NoPrefetchLink href="/categories" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/categories" className="text-gray-300 hover:text-cyan-400 transition-colors duration-300">
                   Categories
                 </NoPrefetchLink>
               </li>
               <li>
-                <NoPrefetchLink href="/custom" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/custom" className="text-gray-300 hover:text-cyan-400 transition-colors duration-300">
                   Custom Orders
                 </NoPrefetchLink>
               </li>
               <li>
-                <NoPrefetchLink href="/about" className="text-gray-300 hover:text-white transition-colors">
+                <NoPrefetchLink href="/about" className="text-gray-300 hover:text-cyan-400 transition-colors duration-300">
                   About Us
                 </NoPrefetchLink>
               </li>

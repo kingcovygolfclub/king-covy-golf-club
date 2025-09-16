@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ShoppingCart, Menu, X, Search } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import CartDropdown from '@/components/cart/CartDropdown';
+import Logo from '@/components/ui/Logo';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,19 +21,12 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center" prefetch={false}>
-              <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">K</span>
-              </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">
-                King Covy Golf Club
-              </span>
-            </Link>
+            <Logo size="md" showText={true} />
           </div>
 
           {/* Desktop Navigation */}
@@ -41,7 +35,7 @@ const Header: React.FC = () => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-cyan-600 px-3 py-2 text-sm font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-magenta-50 rounded-lg"
               >
                 {item.name}
               </Link>
@@ -53,11 +47,11 @@ const Header: React.FC = () => {
             {/* Search */}
             <div className="hidden sm:block">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-cyan-500 h-4 w-4" />
                 <input
                   type="text"
                   placeholder="Search products..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent w-64"
+                  className="pl-10 pr-4 py-2 border border-cyan-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white/80 backdrop-blur-sm w-64 transition-all duration-300"
                 />
               </div>
             </div>
@@ -66,11 +60,11 @@ const Header: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setIsCartOpen(!isCartOpen)}
-                className="relative p-2 text-gray-700 hover:text-primary-600 transition-colors"
+                className="relative p-2 text-gray-700 hover:text-cyan-600 transition-all duration-300 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-magenta-50 rounded-lg"
               >
                 <ShoppingCart className="h-6 w-6" />
                 {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse">
                     {itemCount}
                   </span>
                 )}
