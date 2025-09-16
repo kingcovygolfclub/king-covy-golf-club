@@ -411,14 +411,14 @@ export default function HomePage() {
             viewport={{ once: true }}
           >
             {[
-              { name: 'Drivers', href: '/shop?category=drivers', icon: '🏌️' },
-              { name: 'Irons', href: '/shop?category=irons', icon: '⚡' },
-              { name: 'Putters', href: '/shop?category=putters', icon: '🎯' },
-              { name: 'Wedges', href: '/shop?category=wedges', icon: '🔧' },
-              { name: 'Fairway Woods', href: '/shop?category=fairway-woods', icon: '🌳' },
-              { name: 'Hybrids', href: '/shop?category=hybrids', icon: '🔀' },
-              { name: 'Accessories', href: '/shop?category=accessories', icon: '🎒' },
-              { name: 'Collectibles', href: '/shop?category=collectibles', icon: '💎' },
+              { name: 'Drivers', href: '/shop?category=drivers', image: 'https://king-covy-assets.s3.amazonaws.com/categories/drivers.png' },
+              { name: 'Irons', href: '/shop?category=irons', image: 'https://king-covy-assets.s3.amazonaws.com/categories/irons.png' },
+              { name: 'Putters', href: '/shop?category=putters', image: 'https://king-covy-assets.s3.amazonaws.com/categories/putters.png' },
+              { name: 'Wedges', href: '/shop?category=wedges', image: 'https://king-covy-assets.s3.amazonaws.com/categories/wedges.png' },
+              { name: 'Fairway Woods', href: '/shop?category=fairway-woods', image: 'https://king-covy-assets.s3.amazonaws.com/categories/fairway%20woods.png' },
+              { name: 'Hybrids', href: '/shop?category=hybrids', image: 'https://king-covy-assets.s3.amazonaws.com/categories/hybrids.png' },
+              { name: 'Accessories', href: '/shop?category=accessories', image: 'https://king-covy-assets.s3.amazonaws.com/categories/accessories.png' },
+              { name: 'Collectibles', href: '/shop?category=collectibles', image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.png' },
             ].map((category, index) => (
               <motion.div
                 key={category.name}
@@ -428,20 +428,35 @@ export default function HomePage() {
               >
                 <Link
                   href={category.href}
-                  className="group relative overflow-hidden rounded-2xl aspect-square bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center"
+                  className="group relative overflow-hidden rounded-2xl aspect-square bg-white shadow-lg hover:shadow-2xl transition-all duration-300"
                 >
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                  />
-                  <motion.div 
-                    className="text-4xl mb-2"
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                  >
-                    {category.icon}
-                  </motion.div>
-                  <span className="text-lg font-semibold text-gray-900 group-hover:text-emerald-600 transition-colors duration-300">
-                    {category.name}
-                  </span>
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40 group-hover:from-black/10 group-hover:to-black/30 transition-all duration-300" />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full p-4">
+                    <motion.div 
+                      className="text-center"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <span className="text-xl font-bold text-white drop-shadow-lg group-hover:text-cyan-300 transition-colors duration-300">
+                        {category.name}
+                      </span>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Neon Border Effect */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-cyan-400/50 transition-all duration-300" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/0 via-magenta-500/0 to-cyan-500/0 group-hover:from-cyan-500/10 group-hover:via-magenta-500/10 group-hover:to-cyan-500/10 transition-all duration-300" />
                 </Link>
               </motion.div>
             ))}
