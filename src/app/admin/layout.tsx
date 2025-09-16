@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
@@ -15,6 +16,16 @@ import {
   FileText,
   Image
 } from 'lucide-react';
+
+// Dynamically import AdminAuthWrapper to prevent SSR issues
+const AdminAuthWrapper = dynamic(() => import('@/components/auth/AdminAuthWrapper'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+    </div>
+  )
+});
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -34,7 +45,8 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <AdminAuthWrapper>
+      <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
         <div className="flex h-full flex-col">
@@ -104,5 +116,6 @@ export default function AdminLayout({
         </main>
       </div>
     </div>
+    </AdminAuthWrapper>
   );
 }
