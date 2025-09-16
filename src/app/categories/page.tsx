@@ -60,7 +60,7 @@ const categories = [
     name: 'Hybrids',
     slug: 'hybrids',
     description: 'Easy-to-hit hybrids for improved accuracy',
-    image: 'https://king-covy-assets.s3.amazonaws.com/categories/hybrids.png',
+    image: 'https://king-covy-assets.s3.amazonaws.com/categories/drivers.png', // Temporary fallback until hybrids.png is uploaded
     count: '8 products',
     brands: ['Titleist', 'Callaway', 'TaylorMade', 'Ping'],
     icon: '🔀',

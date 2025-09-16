@@ -416,7 +416,7 @@ export default function HomePage() {
               { name: 'Putters', href: '/shop?category=putters', image: 'https://king-covy-assets.s3.amazonaws.com/categories/putters.png' },
               { name: 'Wedges', href: '/shop?category=wedges', image: 'https://king-covy-assets.s3.amazonaws.com/categories/wedges.png' },
               { name: 'Fairway Woods', href: '/shop?category=fairway-woods', image: 'https://king-covy-assets.s3.amazonaws.com/categories/fairway%20woods.png' },
-              { name: 'Hybrids', href: '/shop?category=hybrids', image: 'https://king-covy-assets.s3.amazonaws.com/categories/hybrids.png' },
+              { name: 'Hybrids', href: '/shop?category=hybrids', image: 'https://king-covy-assets.s3.amazonaws.com/categories/drivers.png' }, // Temporary fallback
               { name: 'Accessories', href: '/shop?category=accessories', image: 'https://king-covy-assets.s3.amazonaws.com/categories/accessories.png' },
               { name: 'Collectibles', href: '/shop?category=collectibles', image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.png' },
             ].map((category, index) => (
