@@ -127,12 +127,21 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-700 to-blue-800">
+        {/* Hero Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://king-covy-assets.s3.amazonaws.com/homepage/hero/hero.png"
+            alt="King Covy Golf Club Hero"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/80 via-teal-700/70 to-blue-800/80" />
           <motion.div
-            className="absolute inset-0 bg-black opacity-30"
+            className="absolute inset-0 bg-black opacity-20"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
+            animate={{ opacity: 0.2 }}
             transition={{ duration: 2 }}
           />
           
