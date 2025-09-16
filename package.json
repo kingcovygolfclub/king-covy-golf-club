@@ -4,10 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:sandbox": "cp env.sandbox .env.local && next dev",
     "build": "next build",
+    "build:sandbox": "cp env.sandbox .env.local && next build",
     "start": "next start",
+    "start:sandbox": "cp env.sandbox .env.local && next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "workflow": "./scripts/dev-workflow.sh",
+    "sandbox": "./scripts/dev-workflow.sh start-sandbox",
+    "test": "./scripts/dev-workflow.sh test-sandbox",
+    "deploy": "./scripts/dev-workflow.sh promote-to-dev"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.888.0",
