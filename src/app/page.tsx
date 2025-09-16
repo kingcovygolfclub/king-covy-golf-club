@@ -246,21 +246,6 @@ export default function HomePage() {
                       className="object-cover rounded-2xl"
                       priority
                     />
-                    {/* Gradient overlay for better text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-2xl" />
-                    
-                    {/* Product info overlay */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <motion.div 
-                        className="bg-white/90 backdrop-blur-sm rounded-lg p-3"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.6, delay: 1.2 }}
-                      >
-                        <p className="text-sm font-semibold text-gray-900">Premium Golf Equipment</p>
-                        <p className="text-xs text-gray-600">Hand-selected collectibles</p>
-                      </motion.div>
-                    </div>
                   </motion.div>
                   
                   {/* Animated background elements */}
