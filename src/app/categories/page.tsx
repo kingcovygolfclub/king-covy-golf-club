@@ -178,11 +178,6 @@ export default function CategoriesPage() {
                     />
                     {/* Gradient overlay */}
                     <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
-                    
-                    {/* Icon overlay */}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-2xl">{category.icon}</span>
-                    </div>
                   </div>
 
                   {/* Category Info */}
