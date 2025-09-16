@@ -12,11 +12,6 @@ const SiteLock = dynamic(() => import('@/components/auth/SiteLock'), {
   loading: () => null
 });
 
-// Temporary test component
-const AuthTest = dynamic(() => import('@/components/auth/AuthTest'), {
-  ssr: false,
-  loading: () => null
-});
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -32,7 +27,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         </main>
         <Footer />
         <SiteLock />
-        <AuthTest />
       </div>
     </CartProvider>
   );
