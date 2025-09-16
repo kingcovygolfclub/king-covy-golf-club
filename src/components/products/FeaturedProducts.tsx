@@ -15,7 +15,7 @@ const featuredProducts: Product[] = [
     description: 'Classic blade putter with milled face for consistent roll',
     price: 399.99,
     originalPrice: 449.99,
-    images: ['https://king-covy-assets.s3.amazonaws.com/products/putters/scotty-cameron-newport-2.svg'],
+    images: ['https://king-covy-assets.s3.amazonaws.com/homepage/hero/hero.png'],
     category: 'putters',
     brand: 'Scotty Cameron',
     condition: 'excellent',
