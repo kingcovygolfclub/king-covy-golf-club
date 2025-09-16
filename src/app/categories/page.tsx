@@ -77,9 +77,9 @@ const categories = [
     color: 'from-indigo-500 to-indigo-600'
   },
   {
-    name: 'Collectibles',
+    name: 'Limited Release',
     slug: 'collectibles',
-    description: 'Rare and vintage golf equipment for collectors',
+    description: 'Exclusive and limited edition golf equipment',
     image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.png',
     count: '28 products',
     brands: ['Various Vintage'],

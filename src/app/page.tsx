@@ -176,7 +176,7 @@ export default function HomePage() {
               </motion.div>
               
               <AnimatedText 
-                text="Premium Golf Equipment & Collectibles"
+                text="Premium Golf Equipment & Limited Release"
                 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight text-white"
               />
               
@@ -418,7 +418,7 @@ export default function HomePage() {
               { name: 'Fairway Woods', href: '/shop?category=fairway-woods', image: 'https://king-covy-assets.s3.amazonaws.com/categories/fairway%20woods.png' },
               { name: 'Hybrids', href: '/shop?category=hybrids', image: 'https://king-covy-assets.s3.amazonaws.com/categories/hybrids.png' },
               { name: 'Accessories', href: '/shop?category=accessories', image: 'https://king-covy-assets.s3.amazonaws.com/categories/accessories.png' },
-              { name: 'Collectibles', href: '/shop?category=collectibles', image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.png' },
+              { name: 'Limited Release', href: '/shop?category=collectibles', image: 'https://king-covy-assets.s3.amazonaws.com/categories/collectibles.png' },
             ].map((category, index) => (
               <motion.div
                 key={category.name}
